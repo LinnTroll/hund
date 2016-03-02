@@ -1,0 +1,26 @@
+{% extends 'frontend/base.html' %}{% load widget_tweaks %}
+
+{% block content %}
+
+    <div data-ng-popup-animal-create-form-warnings></div>
+
+    <h3></h3>
+
+    <div data-ng-init="data={{ animal_data }};">
+        <div class="row">
+            <div class="col-sm-8">
+                <h4>Редактирование {{ object }}</h4>
+            </div>
+            <div class="col-sm-4 text-right">
+                <a href="{% url 'core_animals_list' %}">Назад</a>
+            </div>
+        </div>
+
+        <h3></h3>
+
+        <div data-ng-widget-full-animal-form data-ng-bind-data="data"></div>
+    </div>
+
+
+
+{% endblock %}

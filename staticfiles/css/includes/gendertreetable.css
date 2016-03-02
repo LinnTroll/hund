@@ -1,0 +1,12 @@
+.gendertreetable {
+  width: 100%;
+  border: 1px solid #dddddd;
+  border-collapse: collapse;
+}
+.gendertreetable tr td,
+.gendertreetable tr th {
+  border: 1px solid #dddddd;
+  width: 25%;
+  vertical-align: top;
+  padding: 6px 10px;
+}

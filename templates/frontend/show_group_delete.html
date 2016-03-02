@@ -1,0 +1,47 @@
+{#<form action="" method="post">{% csrf_token %}#}
+{#    <p>Are you sure you want to delete "{{ object }}"?</p>#}
+{#    <input type="submit" value="Confirm" />#}
+{#</form>#}
+
+
+{% extends 'frontend/base.html' %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Удаление группы № {{ object.pk }}</h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_list' %}">Назад</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <p>
+                Вы действительно хотите удалит группу выставок?
+                {% if object.show_set.all %}
+                    <br>
+                    Вместе с группой так же будут удалены входящие в нее выставки:
+                {% endif %}
+            </p>
+            {% if object.show_set.all %}
+                <ul>
+                    {% for show in object.show_set.all %}
+                        <li>{{ show }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
+            <form action="#" method="post">{% csrf_token %}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'core_show_groups_list' %}" class="btn btn-default">Отмена</a>
+            </form>
+        </div>
+    </div>
+
+
+
+{% endblock %}

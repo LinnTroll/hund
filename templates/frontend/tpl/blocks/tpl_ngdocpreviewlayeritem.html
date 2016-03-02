@@ -1,0 +1,22 @@
+<script type="text/ng-template" id="tpl_ngdocpreviewlayeritem">
+    <div data-ng-show="(( bind_mode === 'default' ))">
+        <div class="docpreview__layer__item__overflow">
+            <div class="docpreview__layer__item__table">
+                <div class="docpreview__layer__item__cell">
+                    <div class="docpreview__layer__item__label">(( bind_item.field.label ))</div>
+                </div>
+            </div>
+        </div>
+        <div class="docpreview__layer__item__panel" data-ng-show="panel_show">
+            <div class="docpreview__layer__item__panel__body">
+                <div class="docpreview__layer__item__panel__body__buttons">
+                    <div class="docpreview__layer__item__panel__body__button"
+                         data-ng-click="removeItem()">Удалить</div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div data-ng-show="(( bind_mode === 'print_preview' || bind_mode === 'print_done' ))">
+        <div class="docpreview__layer__item__value">(( bind_item.value ))</div>
+    </div>
+</script>

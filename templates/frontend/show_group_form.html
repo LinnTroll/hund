@@ -1,0 +1,219 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags bootstrap3 %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            {% if object %}
+                <h4>Редактирование группы выставок</h4>
+            {% else %}
+                <h4>Создание группы выставок</h4>
+            {% endif %}
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_list' %}">Назад</a>
+        </div>
+    </div>
+
+    {% if not object %}
+        <div class="row">
+            <div class="col-sm-5">
+                <form action="#" method="post" class="form">
+                    {% csrf_token %}
+                    {% buttons %}
+                        <button type="submit" class="btn btn-primary">{% if object %}Сохранить{% else %}Создать{% endif %}</button>
+                    {% endbuttons %}
+                </form>
+            </div>
+            <div class="col-sm-7">
+
+            </div>
+        </div>
+    {% endif %}
+
+    {% if object %}
+        {% if object.show_set.all %}
+            {% if not object.check_in %}
+                <a href="{% url 'core_show_groups_edit_check_in' pk=object.pk %}" class="btn btn-warning">
+                    <span class="glyphicon glyphicon-ok"></span>
+                    Закрыть все выставки
+                </a>
+            {% else %}
+                <div>
+                    <div class="text-muted"></div>
+
+                    <div class="alert alert-warning">
+
+                        <div class="row">
+                            <div class="col-sm-10">
+                                Все выставки закрыты.
+                            </div>
+                            <div class="col-sm-2 text-right">
+                                <a href="{% url 'core_show_groups_edit_check_out' pk=object.pk %}"
+                                   class="text-danger">Открыть заново</a>
+                            </div>
+                        </div>
+
+                    </div>
+
+                    <div class="row">
+                        <div class="col-sm-9">
+
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><span class="glyphicon glyphicon glyphicon-print"></span> Печать</div>
+
+                                <table class="table table-striped group-show-print-table">
+                                    <tr>
+                                        <th>Каталог</th>
+                                        <th>Участники</th>
+                                        <th>Шаблоны</th>
+                                        <th></th>
+                                    </tr>
+                                    <tr>
+                                        <td width="250">
+                                            <div>
+                                                <a href="{% url 'core_show_catalogs_detail' pk=object.catalog.pk %}?add_list=no"
+                                                   class="text-primary">
+                                                    <span class="glyphicon glyphicon glyphicon-print"></span>
+                                                    Основной каталог
+                                                </a>
+                                            </div>
+                                            {% if has_add_list %}
+                                                <div>
+                                                    <a href="{% url 'core_show_catalogs_detail' pk=object.catalog.pk %}?add_list=yes"
+                                                       class="text-primary">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span>
+                                                        Дополнительный каталог
+                                                    </a>
+                                                </div>
+                                            {% endif %}
+                                        </td>
+                                        <td width="250">
+                                            {% for show in object.show_set.all %}
+                                                <div>
+                                                    <a href="{% url 'core_show_members_print_pdf' group=show.group.pk pk=show.pk %}"
+                                                       class="text-primary">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span>
+                                                        Участники «{{ show }}»
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+
+                                            <hr style="margin: 6px 0 10px;">
+
+                                            <div>
+                                                <div>Ведомости выдачи сертификатов:</div>
+
+                                                <h5>
+                                                    <a href="{% url 'core_show_certlist_print_pdf' pk=object.pk title='cac' %}"
+                                                       class="label label-primary" style="font-weight: normal;">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span> CAC
+                                                    </a>
+                                                    <a href="{% url 'core_show_certlist_print_pdf' pk=object.pk title='rcac' %}"
+                                                       class="label label-primary" style="font-weight: normal;">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span> R.CAC
+                                                    </a>
+                                                    <a href="{% url 'core_show_certlist_print_pdf' pk=object.pk title='bjc' %}"
+                                                       class="label label-primary" style="font-weight: normal;">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span> BJC
+                                                    </a>
+                                                </h5>
+
+                                            </div>
+
+                                        </td>
+                                        <td width="250">
+                                            {% for show in object.show_set.all %}
+                                                <div>
+                                                    <a href="{% url 'core_doctpl_print_select' %}?pks={% for member in show.showmember_set.all %}{{ member.pk }}{% if not forloop.last %},{% endif %}{% endfor %}&model=core.showmember"
+                                                       class="text-primary">
+                                                        <span class="glyphicon glyphicon glyphicon-print"></span>
+                                                        Шаблон для участников «{{ show }}»
+                                                    </a>
+                                                </div>
+                                            {% endfor %}
+                                        </td>
+                                        <td></td>
+                                    </tr>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="col-sm-3">
+                            <div class="panel panel-default">
+                                <div class="panel-heading"><span class="glyphicon glyphicon glyphicon-certificate"></span> Cертификаты</div>
+                                <div class="panel-body">
+                                    <div>Раздать номера сертификатов:</div>
+                                    <h4>
+                                        <a href="{% url 'core_show_certlist_set_numbers' pk=object.pk title='cac' %}" class="label label-primary" style="font-weight: normal;">
+                                            <span class="glyphicon glyphicon glyphicon-certificate"></span> CAC</a>
+                                    </h4>
+                                    <h4>
+                                        <a href="{% url 'core_show_certlist_set_numbers' pk=object.pk title='rcac' %}" class="label label-primary" style="font-weight: normal;">
+                                            <span class="glyphicon glyphicon glyphicon-certificate"></span> R.CAC</a>
+                                    </h4>
+                                    <h4>
+                                        <a href="{% url 'core_show_certlist_set_numbers' pk=object.pk title='bjc' %}" class="label label-primary" style="font-weight: normal;">
+                                            <span class="glyphicon glyphicon glyphicon-certificate"></span> BJC</a>
+                                    </h4>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+
+
+
+                    <h4></h4>
+
+                </div>
+            {% endif %}
+        {% endif %}
+
+        <hr>
+        {% if not object.check_in %}
+            <a href="{% url 'core_show_add' group=object.pk %}" class="btn btn-sm btn-success">
+                <span class="glyphicon glyphicon glyphicon-plus"></span> Добавить выставку
+            </a>
+        {% endif %}
+
+        {% if object.show_set.all %}
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Выставка</th>
+                        <th style="width: 140px;">Участников</th>
+                        <th style="width: 160px;">Дата</th>
+                        {% if not object.check_in %}
+                            <th style="width: 14px;"><span class="glyphicon glyphicon-trash"></span></th>
+                        {% endif %}
+                    </tr>
+                </thead>
+                <tbody>
+                {% for show in object.show_set.all %}
+                    <tr>
+                        <td>
+                            <a href="{% url 'core_show_edit' group=object.pk pk=show.pk %}">{{ show }}</a>
+                        </td>
+                        <td>{{ show.showmember_set.count }}</td>
+                        <td>{{ show.date }}</td>
+                        {% if not object.check_in %}
+                            <td>
+                                <a href="{% url 'core_show_delete' group=show.group.pk pk=show.pk %}" class="text-danger" title="Удалить выставку">
+                                    <span class="glyphicon glyphicon-remove"></span>
+                                </a>
+                            </td>
+                        {% endif %}
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+    {% endif %}
+
+    <br>
+    <br>
+    <br>
+
+{% endblock %}

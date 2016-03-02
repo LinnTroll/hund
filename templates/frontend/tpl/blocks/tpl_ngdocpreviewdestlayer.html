@@ -1,0 +1,11 @@
+<script type="text/ng-template" id="tpl_ngdocpreviewdestlayer">
+    <div class="docpreview__layer__in">
+        <div class="docpreview__layer__item"
+             data-ng-class="{docpreview__layer__item_print: bind_mode === 'print_preview' || bind_mode === 'print_done'}"
+             data-ng-repeat="item in items track by item.index"
+             data-ng-docpreview-layer-item
+             data-ng-bind-mode="bind_mode"
+             data-ng-bind-item="item">
+        </div>
+    </div>
+</script>

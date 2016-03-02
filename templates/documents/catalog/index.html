@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            html, body {
+                color: #000000;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 0.7em;
+                line-height: 1.2em;
+            }
+
+            .catalog__item {
+                margin-bottom: 0.5cm;
+                page-break-inside: avoid;
+            }
+
+            .catalog__item:last-child {
+                margin-bottom: 0;
+            }
+
+            .catalog__show__container {
+                margin-bottom: 0.4cm;
+            }
+
+            .catalog__show {
+                font-size: 1.5em;
+                line-height: 1.3em;
+                text-align: center;
+                margin-top: 2cm;
+                font-weight: bold;
+            }
+
+            .catalog__judge {
+                font-size: 1em;
+                line-height: 1.3em;
+                text-align: center;
+                font-weight: bold;
+            }
+
+            .catalog__item:first-child .catalog__show {
+                margin-top: 0;
+            }
+
+            .catalog__breed {
+                font-size: 1.2em;
+                color: #774400;
+                text-align: center;
+                margin-bottom: 0.3cm;
+                font-weight: bold;
+            }
+
+            .catalog__class {
+                font-weight: bold;
+                margin-bottom: 0.2cm;
+            }
+
+            .catalog__item__animal__table {
+                display: table;
+            }
+
+            .catalog__item__animal__cell {
+                display: table-cell;
+            }
+
+            .catalog__item__animal__cell.catalog__item__animal__cell_left {
+                width: 1.5cm;
+            }
+
+            .catalog__item__animal__cell.catalog__item__animal__cell_number {
+                width: 0.8cm;
+            }
+
+            .catalog__item__animal__cell.catalog__item__animal__cell_right {
+
+            }
+        </style>
+    </head>
+    <body>
+        <div class="catalog">
+            {% for member in members %}
+                <div class="catalog__item">
+                    {% ifchanged member.show %}
+                        <div class="catalog__show__container">
+                            <div class="catalog__show">{{ member.show }}</div>
+                            {% if member.show.judge %}
+                                <div class="catalog__judge">Судья: {{ member.show.judge }}</div>
+                            {% endif %}
+                        </div>
+                    {% endifchanged %}
+                    {% ifchanged member.animal.breed %}
+                        <div class="catalog__breed">{{ member.animal.breed }}</div>
+                    {% endifchanged %}
+                    {% ifchanged member.animal.breed or member.showclass %}
+                        <div class="catalog__class">{{ member.showclass }}</div>
+                    {% endifchanged %}
+
+                    <div class="catalog__item__animal">
+                        <div class="catalog__item__animal__table">
+                            <div class="catalog__item__animal__cell catalog__item__animal__cell_left">
+                                {% ifchanged member.animal.breed or member.showclass or member.animal.gender %}
+                                    <div class="catalog__item__animal__line">
+                                        {% if member.animal.gender == 'm' %}Кобель{% else %}Сука{% endif %}
+                                    </div>
+                                {% endifchanged %}
+                            </div>
+                            <div class="catalog__item__animal__cell catalog__item__animal__cell_number">
+                                <b>{{ member.number }}</b>
+                            </div>
+                            <div class="catalog__item__animal__cell catalog__item__animal__cell_right">
+                                <div class="catalog__item__animal__line">
+                                    {{ member.animal.get_display }}{% if member.animal.get_color %}, {{ member.animal.get_color }}{% endif %}
+                                </div>
+                                {% if member.animal.chip or member.animal.mark %}
+                                    <div class="catalog__item__animal__line">
+                                        {% if member.animal.chip and member.animal.mark %}
+                                            Чип: {{ member.animal.chip }}, клеймо: {{ member.animal.mark }}
+                                        {% else %}
+                                            {% if member.animal.chip %}
+                                                Чип: {{ member.animal.chip }}
+                                            {% else %}
+                                                Клеймо: {{ member.animal.mark }}
+                                            {% endif %}
+                                        {% endif %}
+                                    </div>
+                                {% endif %}
+                                <div class="catalog__item__animal__line">
+                                    {% for pedigree_number in member.animal.get_pedigree_numbers %}{{ pedigree_number.number }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if member.animal.birthdate %}, р. {{ member.animal.birthdate|date:'d.m.Y' }} г.{% endif %}
+                                </div>
+                                {% if member.animal.father %}
+                                    <div class="catalog__item__animal__line">{{ member.animal.father.get_display }}</div>
+                                {% endif %}
+                                {% if member.animal.mother %}
+                                    <div class="catalog__item__animal__line">{{ member.animal.mother.get_display }}</div>
+                                {% endif %}
+                                {% if member.animal.get_owners %}
+                                    <div class="catalog__item__animal__line">
+                                        {{ member.animal.get_owners.0.name }}
+                                    </div>
+                                {% endif %}
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </body>
+</html>
+
+
+<!--
+            html, body {
+
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 0.7em;
+                line-height: 1.2em;
+            }
+
+            .animals {
+
+            }
+
+            .breed__title {
+                font-size: 1.2em;
+                color: #774400;
+                text-align: center;
+                margin-bottom: 0.3cm;
+            }
+
+            .breed__class {
+                margin-bottom: 0.1cm;
+            }
+
+            .breed__class__title {
+                font-weight: bold;
+                line-height: 1.4em;
+            }
+
+            .dog {
+                margin-bottom: 0.5cm;
+                page-break-inside: avoid;
+            }
+
+            .dog__table {
+                display: table;
+                width: 100%;
+            }
+
+            .dog__gender {
+                display: table-cell;
+                vertical-align: top;
+                width: 2cm;
+            }
+
+            .dog__gender__title {
+
+            }
+
+            .dog__info {
+                display: table-cell;
+                vertical-align: top;
+            }
+
+            .dog__info__row {
+
+            }
+-->

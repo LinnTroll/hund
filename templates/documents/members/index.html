@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <title></title>
+        <style>
+            html, body {
+                color: #000000;
+            }
+
+            body {
+                font-family: Arial, sans-serif;
+                font-size: 0.7em;
+                line-height: 1.2em;
+            }
+
+            .main-title {
+                text-align: center;
+            }
+
+            table.listtable {
+                border: 1px solid #000000;
+                border-collapse: collapse;
+                width: 100%;
+            }
+
+            table.listtable tr {
+                page-break-inside: avoid;
+            }
+
+            table.listtable tr td, table.listtable tr th {
+                border: 1px solid #000000;
+            }
+
+            table.listtable tr th {
+            }
+
+            table.listtable tr td {
+                vertical-align: top;
+            }
+
+            .cell-in {
+                padding: 2px 4px;
+            }
+
+            .cell-number {
+            }
+            .cell-number .cell-in {
+                text-align: right;
+            }
+
+            .cell-breed {
+            }
+            .cell-breed .cell-in {
+                width: 2.6cm;
+            }
+
+            .cell-name {
+            }
+            .cell-name .cell-in {
+                width: 3.6cm;
+            }
+
+            .cell-gender {
+            }
+            .cell-gender .cell-in {
+            }
+
+            .cell-class {
+            }
+            .cell-class .cell-in {
+                width: 2.2cm;
+            }
+
+            .cell-owner {
+            }
+            .cell-owner  .cell-in{
+                width: 3.6cm;
+            }
+
+            .cell-other {
+                width: 50%;
+            }
+            .cell-other .cell-in {
+            }
+
+            .cell-in-address {
+                font-size: 0.9em;
+            }
+
+            .cell-in-phone {
+                white-space: nowrap;
+                font-size: 0.9em;
+            }
+
+            .cell-in-email {
+                white-space: nowrap;
+                font-size: 0.9em;
+            }
+
+        </style>
+    </head>
+    <body>
+
+        <h3 class="main-title">Участники выставки «{{ show }}»</h3>
+
+
+        <table class="listtable">
+            <tr>
+                <th class="cell-number"><div class="cell-in">№</div></th>
+                <th class="cell-breed"><div class="cell-in">Пород</div></th>
+                <th class="cell-name"><div class="cell-in">Кличка</div></th>
+                <th class="cell-gender"><div class="cell-in">Пол</div></th>
+                <th class="cell-class"><div class="cell-in">Класс</div></th>
+                <th class="cell-owner"><div class="cell-in">Владелец</div></th>
+                <th class="cell-other"><div class="cell-in"></div></th>
+                <th class="cell-other"><div class="cell-in"></div></th>
+            </tr>
+            {% for member in members %}
+                <tr>
+                    <td class="cell-number">
+                        <div class="cell-in">{{ member.number }}</div>
+                    </td>
+                    <td class="cell-breed">
+                        <div class="cell-in">{{ member.animal.breed }}</div>
+                    </td>
+                    <td class="cell-name">
+                        <div class="cell-in">{{ member.animal.get_display }}</div>
+                    </td>
+                    <td class="cell-gender">
+                        <div class="cell-in">{{ member.animal.get_gender_display }}</div>
+                    </td>
+                    <td class="cell-class">
+                        <div class="cell-in">{{ member.showclass.short_title }}</div>
+                    </td>
+                    <td class="cell-owner">
+                        <div class="cell-in">
+                            {% if member.animal.get_last_owner %}
+                                <div>{{ member.animal.get_last_owner.name }}</div>
+                                {% if member.animal.get_last_owner.address %}<div class="cell-in-address">{{ member.animal.get_last_owner.address }}</div>{% endif %}
+                                {% if member.animal.get_last_owner.phone %}<div class="cell-in-phone">{{ member.animal.get_last_owner.phone }}</div>{% endif %}
+                                {% if member.animal.get_last_owner.email %}<div class="cell-in-email">{{ member.animal.get_last_owner.email }}</div>{% endif %}
+                            {% endif %}
+                        </div>
+                    </td>
+                    <td class="cell-other"><div class="cell-in"></div></td>
+                    <td class="cell-other"><div class="cell-in"></div></td>
+                </tr>
+            {% endfor %}
+        </table>
+
+    </body>
+</html>

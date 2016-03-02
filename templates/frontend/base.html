@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html ng-app="hund">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <title>HUND</title>
+        <link href="{{ STATIC_URL }}jquery-ui-1.11.3/jquery-ui.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}select2-4.0.0-rc.1/css/select2.min.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}bootstrap-3.3.2-dist/css/bootstrap.css" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/select2-over.css?v=2" rel="stylesheet">
+        <link href="{{ STATIC_URL }}css/main.css?v=6" rel="stylesheet">
+        <style>
+            body {
+                padding-top: 50px;
+            }
+        </style>
+        <script>
+            var csrf_token = '{{ csrf_token }}';
+            var ROUTER = {
+                core_ajax_breed_search: '{% url 'core_ajax_breed_search' %}',
+                core_ajax_animal_search: '{% url 'core_ajax_animal_search' %}',
+                core_ajax_animal_create: '{% url 'core_ajax_animal_create' %}'
+            };
+        </script>
+        <script src="{{ STATIC_URL }}js/jquery-2.1.3.min.js"></script>
+        <script src="{{ STATIC_URL }}jquery-ui-1.11.3/jquery-ui.min.js"></script>
+        <script src="{{ STATIC_URL }}select2-4.0.0-rc.1/js/select2.min.js"></script>
+        <script src="{{ STATIC_URL }}js/angular.min.js"></script>
+        <script src="{{ STATIC_URL }}js/underscore-min.js"></script>
+        <script src="{{ STATIC_URL }}js/main.js?v=3"></script>
+        <script src="{{ STATIC_URL }}js/client/utils.js?v=6"></script>
+        <script src="{{ STATIC_URL }}js/client/client.js?v=6"></script>
+        <script src="{{ STATIC_URL }}js/client/client-services.js?v=5"></script>
+        <script src="{{ STATIC_URL }}js/client/client-controllers.js?v=6"></script>
+        <script src="{{ STATIC_URL }}js/client/client-directives.js?v=6"></script>
+        <script src="{{ STATIC_URL }}js/client/client-filter.js?v=5"></script>
+        <script src="{{ STATIC_URL }}bootstrap-3.3.2-dist/js/bootstrap.min.js"></script>
+    </head>
+    <body class="body {% block body_extra_class %}{% endblock %}">
+        {% block body %}
+            {% include 'frontend/tpl/all_tpls.html' %}
+            <nav class="navbar navbar-inverse navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <a class="navbar-brand" href="{% url 'core_index' %}">HUND</a>
+                    </div>
+                    <div id="navbar" class="collapse navbar-collapse">
+                        <ul class="nav navbar-nav">
+                            <li><a href="{% url 'core_animals_list' %}">Животные</a></li>
+                            <li><a href="{% url 'core_show_groups_list' %}">Выставки</a></li>
+                            <li><a href="{% url 'core_doctpl_list' %}">Документы</a></li>
+                        </ul>
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="{% url 'core_logout' %}"><span class="glyphicon glyphicon-log-out" aria-hidden="true"></span></a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+            {% block container %}
+                <div class="container">
+                    {% block content %}{% endblock %}
+                </div>
+            {% endblock %}
+        {% endblock %}
+    </body>
+</html>

@@ -1,0 +1,47 @@
+{% extends 'frontend/base.html' %}{% load bootstrap3 %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Создание </h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_edit' pk=group.pk %}">Назад</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-5">
+            <form action="#" method="post" class="form">
+                {% csrf_token %}
+
+                {% bootstrap_form_errors form %}
+
+                <div class="form-group">
+                    <label class="control-label" for="id_{{ form.animal.html_name }}">Животное</label>
+                    <select class="form-control"
+                            id="id_{{ form.animal.html_name }}"
+                            name="{{ form.animal.html_name }}"
+                            required="required"
+                            data-ng-animal-autocomplete></select>
+                </div>
+
+                {% bootstrap_field form.showclass %}
+
+                {% if form.number %}
+                    {% bootstrap_field form.number %}
+                {% endif %}
+
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">Создать</button>
+                {% endbuttons %}
+            </form>
+        </div>
+        <div class="col-sm-7">
+        </div>
+    </div>
+
+
+{% endblock %}

@@ -1,0 +1,75 @@
+{% extends 'frontend/base.html' %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            {% if checkin_mode == 'do_close' %}
+                <h4>Закрыть группу выставок № {{ object.pk }}</h4>
+            {% else %}
+                <h4>Открыть группу выставок № {{ object.pk }}</h4>
+            {% endif %}
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_edit' pk=object.pk %}">Назад</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-6">
+            <p>
+                {% if checkin_mode == 'do_close' %}
+                    Вы действительно хотите закрыть выставки:
+                {% else %}
+                    Вы действительно хотите открыть выставки:
+                {% endif %}
+            </p>
+
+            <ul>
+                {% for show in object.show_set.all %}
+                    <li>{{ show }}</li>
+                {% endfor %}
+            </ul>
+
+            {% if checkin_mode == 'do_close' %}
+                <div class="alert alert-success">
+                    После закрытия группы будет сформирован каталог.
+                </div>
+
+                <div class="alert alert-warning">
+                    После закрытия группы вы не сможете добавлять в группу новые выставки, удалять из нее существующие.<br>
+                    Все участники выставок, добавленные после закрытия не будут иметь в каталоге номеров идущих по порядку.
+                </div>
+
+                <form action="#" method="post">{% csrf_token %}
+                    <input type="hidden" name="action" value="close">
+                    <button type="submit" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        Закрыть
+                    </button>
+                    <a href="{% url 'core_show_groups_edit' pk=object.pk %}" class="btn btn-default">Отмена</a>
+                </form>
+            {% else %}
+                <div class="alert alert-danger">
+                    Будте внимательны, открывая выставку заново!<br>
+                    <b>Нумерация каталога может изменится!</b>
+                </div>
+
+                <form action="#" method="post">{% csrf_token %}
+                    <input type="hidden" name="action" value="open">
+                    <button type="submit" class="btn btn-danger">
+                        <span class="glyphicon glyphicon-ok"></span>
+                        Открыть
+                    </button>
+                    <a href="{% url 'core_show_groups_edit' pk=object.pk %}" class="btn btn-default">Отмена</a>
+                </form>
+            {% endif %}
+
+
+        </div>
+    </div>
+
+
+
+{% endblock %}

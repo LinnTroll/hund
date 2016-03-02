@@ -1,0 +1,17 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags bootstrap3 %}
+
+{% block body_extra_class %}body_promo{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <form class="form-signin" method="post" action="#">{% csrf_token %}
+            <h2 class="form-signin-heading">Вход</h2>
+
+            {% bootstrap_field form.username show_label=False %}
+            {% bootstrap_field form.password show_label=False %}
+
+            <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+        </form>
+
+    </div>
+{% endblock %}

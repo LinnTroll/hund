@@ -1,0 +1,17 @@
+.shortanimal__autocompliterow__name {
+  font-size: 13px;
+}
+.shortanimal__autocompliterow__number {
+  font-size: 12px;
+  opacity: .6;
+}
+.shortanimal__info {
+  font-size: 12px;
+}
+.shortanimal__info__color {
+  color: #888888;
+}
+.shortanimal__info__breed {
+  color: #888888;
+  font-size: 11px;
+}

@@ -1,0 +1,285 @@
+<script type="text/ng-template" id="include_animalform">
+
+    <div class="row row-space-bottom">
+        <div class="col-md-4">
+            <label>Имя</label>
+
+            <div class="input-group input-group-sm" data-ng-class="{'has-error': errors.name_ru}">
+                <input type="text" class="form-control" data-ng-model="data.name_ru">
+                <span class="input-group-addon">RU</span>
+            </div>
+
+            <div class="separator separator-light-bottom"></div>
+
+            <div class="input-group input-group-sm" data-ng-class="{'has-error': errors.name_en}">
+                <input type="text" class="form-control" data-ng-model="data.name_en">
+                <span class="input-group-addon">EN</span>
+            </div>
+
+        </div>
+        <div class="col-md-2">
+            <label>Пол</label>
+            <div class="radio" style="margin: 0" data-ng-class="{'has-error': errors.gender}" data-ng-show="form_mode === 'full'">
+                <label>
+                    <input type="radio" name="gender_input_(( uw_number ))"
+                           value="m"
+                           data-ng-model="data.gender">
+                    <span>Кобель</span>
+                </label>
+                &nbsp;&nbsp;
+                <label>
+                    <input type="radio" name="gender_input_(( uw_number ))"
+                           value="f"
+                           data-ng-model="data.gender">
+                    <span>Сука</span>
+                </label>
+            </div>
+            <div data-ng-show="form_mode === 'short'">
+                <div data-ng-show="data.gender === 'm'">Кобель</div>
+                <div data-ng-show="data.gender === 'f'">Сука</div>
+            </div>
+        </div>
+        <div class="col-md-4" data-ng-class="{'has-error': errors.breed}">
+            <label>Порода</label>
+            <select class="form-control input-sm"
+                    data-ng-model="data.breed_data"
+                    data-ng-bind-data="data.breed_data"
+                    data-ng-options="item.text for item in [data.breed_data] track by item.id"
+                    data-ng-breed-autocomplete></select>
+            <!--<div data-ng-show="form_mode === 'short'">(( data.breed_data.text ))</div>-->
+        </div>
+        <div class="col-md-2">
+            <label>Цвет</label>
+
+            <div class="input-group input-group-sm" data-ng-class="{'has-error': errors.color_ru}">
+                <input type="text" class="form-control" data-ng-model="data.color_ru">
+                <span class="input-group-addon">RU</span>
+            </div>
+
+            <div class="separator separator-light-bottom"></div>
+
+            <div class="input-group input-group-sm" data-ng-class="{'has-error': errors.color_en}">
+                <input type="text" class="form-control" data-ng-model="data.color_en">
+                <span class="input-group-addon">EN</span>
+            </div>
+
+        </div>
+    </div>
+
+
+    <div class="row row-space-bottom">
+        <div class="col-md-4" data-ng-class="{'has-error': errors.pedigree_numbers}">
+
+            <label>№ родословной</label>
+
+            <div class="row row-space-bottom-tiny" data-ng-repeat="pedigree_number in data.pedigree_numbers track by $index">
+                <div class="col-md-12">
+                    <div class="input-group input-group-sm">
+                        <input type="text" class="form-control" data-ng-model="data.pedigree_numbers[$index].number">
+                        <span class="input-group-btn">
+                            <button class="btn btn-danger" type="button"
+                                    data-ng-if="data.pedigree_numbers.length > 1"
+                                    data-ng-click="removePedigreeNumberField($index)">
+                                <span class="glyphicon glyphicon glyphicon-remove"></span>
+                            </button>
+                            <button class="btn btn-primary btn-sm" type="button"
+                                    data-ng-if="data.pedigree_numbers.length <= 1"
+                                    data-ng-click="addPedigreeNumberField()">
+                                <span class="glyphicon glyphicon glyphicon-plus"></span>
+                            </button>
+                        </span>
+                    </div>
+                </div>
+            </div>
+
+
+            <div class="row row-space-bottom-tiny" data-ng-if="data.pedigree_numbers.length > 1">
+                <div class="col-md-12" style="text-align: right;">
+                    <button class="btn btn-primary btn-sm" type="button" data-ng-click="addPedigreeNumberField()">
+                        <span class="glyphicon glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="col-md-2" data-ng-class="{'has-error': errors.birthdate}">
+            <label>Дата рождения</label>
+            <input type="text" class="form-control input-sm"
+                   data-ng-model="data.birthdate"
+                   data-ng-datepicker>
+        </div>
+        <div class="col-md-2" data-ng-class="{'has-error': errors.chip}">
+            <label>Чип</label>
+            <input type="text" class="form-control input-sm" data-ng-model="data.chip">
+        </div>
+        <div class="col-md-2" data-ng-class="{'has-error': errors.mark}">
+            <label>Клеймо</label>
+            <input type="text" class="form-control input-sm" data-ng-model="data.mark">
+        </div>
+    </div>
+
+
+    <div class="row">
+        <div class="col-md-4" data-ng-class="{'has-error': errors.owners}">
+            <div class="row row-space-bottom-tiny">
+                <div class="col-md-12">
+                    <div class="form-horizontal" data-ng-repeat="owner in data.owners track by $index">
+                        <div class="row row-space-bottom-tiny">
+                            <div class="col-sm-offset-3 col-sm-6">
+                                <label class="bold">Владелец<span data-ng-show="data.owners.length > 1"> #(( $index+1 ))</span>:</label>
+                            </div>
+                            <div class="col-sm-3" style="text-align: right;">
+                                <button class="btn btn-danger btn-xs" type="button"
+                                        data-ng-show="data.owners.length > 1"
+                                        data-ng-click="removeOwnerBlock($index)">
+                                    <span class="glyphicon glyphicon glyphicon-remove"></span>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Имя</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].name">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Адрес</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].address">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">телефон</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].phone">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Email</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].email">
+                            </div>
+                        </div>
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Работа</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].work">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-space-separator">
+                <div class="col-md-12" style="text-align: right;">
+                    <button class="btn btn-primary btn-sm" type="button" data-ng-click="addOwnerBlock()">
+                        <span class="glyphicon glyphicon glyphicon-plus"></span>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-md-4">
+            <div class="form-horizontal">
+                <div class="row row-space-bottom-tiny">
+                    <div class="col-sm-offset-3 col-sm-9">
+                        <label class="bold">Заводчик:</label>
+                    </div>
+                </div>
+                <div class="form-group" data-ng-class="{'has-error': errors.kennel_name}">
+                    <label class="col-sm-3 control-label">Имя</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" data-ng-model="data.kennel_name">
+                    </div>
+                </div>
+                <div class="form-group" data-ng-class="{'has-error': errors.kennel}">
+                    <label class="col-sm-3 control-label">Питомник</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" data-ng-model="data.kennel">
+                    </div>
+                </div>
+                <div class="form-group" data-ng-class="{'has-error': errors.kennel_address}">
+                    <label class="col-sm-3 control-label">Адрес</label>
+                    <div class="col-sm-9">
+                        <input type="text" class="form-control input-sm" data-ng-model="data.kennel_address">
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-offset-1 col-md-3">
+            <div class="form-horizontal">
+                <div class="row row-space-bottom-tiny">
+                    <div class="col-sm-12">
+                        <label class="bold">Титулы:</label>
+                    </div>
+                </div>
+
+                <div class="row row-space-bottom-tiny" data-ng-repeat="title in data.titles track by $index">
+                    <div class="col-sm-5">
+                        <input type="text" class="form-control input-sm" data-ng-model="data.titles[$index].title">
+                    </div>
+                    <div class="col-sm-4">
+                        <input type="text" class="form-control input-sm" data-ng-model="data.titles[$index].info">
+                    </div>
+                    <div class="col-sm-3" style="text-align: right;">
+                        <button class="btn btn-danger btn-sm" type="button"
+                                data-ng-if="data.titles.length > 1"
+                                data-ng-click="removeTitleRow($index)">
+                            <span class="glyphicon glyphicon glyphicon-remove"></span>
+                        </button>
+                        <button class="btn btn-primary btn-sm" type="button"
+                                data-ng-if="data.titles.length <= 1"
+                                data-ng-click="addTitleRow()">
+                            <span class="glyphicon glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                </div>
+
+                <div class="row" data-ng-if="data.titles.length > 1">
+                    <div class="col-sm-12" style="text-align: right;">
+                        <button class="btn btn-primary btn-sm" type="button" data-ng-click="addTitleRow()">
+                            <span class="glyphicon glyphicon glyphicon-plus"></span>
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <label class="bold">Клуб:</label>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-3">
+            <div>
+                <label>
+                    <input type="checkbox" data-ng-model="data.is_our">
+                    Наш
+                </label>
+            </div>
+            <div data-ng-show="data.is_our">
+                <div data-ng-class="{'has-error': errors.reg_number}" style="margin-top: 6px;">
+                    <label>Регистрационный номер:</label>
+                    <input type="text" class="form-control input-sm"
+                           data-ng-model="data.reg_number">
+                </div>
+
+                <div data-ng-class="{'has-error': errors.reg_date}" style="margin-top: 12px;">
+                    <label>Дата регистрации:</label>
+                    <input type="text" class="form-control input-sm"
+                           data-ng-model="data.reg_date"
+                           data-ng-datepicker>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-sm-8"></div>
+    </div>
+
+    <br>
+</script>

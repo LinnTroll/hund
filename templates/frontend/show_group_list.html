@@ -1,0 +1,69 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Группы выставок</h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_add' %}"
+               class="btn btn-sm btn-success"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить</a>
+        </div>
+    </div>
+
+    {% autopaginate object_list 10 %}
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th style="width: 140px;">Группа</th>
+                <th>Выставки</th>
+{#                <th style="width: 160px;">Каталог</th>#}
+                <th style="width: 160px;">Регистрация</th>
+                <th style="width: 14px;">
+                    <span class="glyphicon glyphicon-trash"></span>
+                </th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'core_show_groups_edit' pk=object.pk %}">Группа № {{ object.pk }}</a>
+                </td>
+                <td>
+                    {% with object.show_set.all as shows %}
+                        {% for show in shows %}
+                            <span>{{ show }}</span>{% if not forloop.last %},{% endif %}
+                        {% empty %}
+                            <span class="text-muted">Нет выставок</span>
+                        {% endfor %}
+                    {% endwith %}
+                </td>
+{#                <td>#}
+{#                    {% if object.catalog %}#}
+{#                        <a href="{% url 'core_show_catalogs_detail' pk=object.catalog.pk %}" class="text-primary">#}
+{#                            <span class="glyphicon glyphicon glyphicon-print"></span>#}
+{#                            Печать#}
+{#                        </a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+                <td style="white-space: nowrap;">
+                    <span class="label {% if object.check_in %}label-default{% else %}label-success{% endif %}">
+                        {% if object.check_in %}Закрыта{% else %}Открыта{% endif %}
+                    </span>
+                </td>
+                <td>
+                    <a href="{% url 'core_show_group_delete' pk=object.pk %}" class="text-danger" title="Удалить группу">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+{% endblock %}

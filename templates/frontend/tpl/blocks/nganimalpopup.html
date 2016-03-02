@@ -1,0 +1,21 @@
+<script type="text/ng-template" id="tpl_nganimalpopup">
+    <div class="animalpopup modal" style="display: block;" data-ng-show="popup_open">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-ng-click="closePopup()"><span>&times;</span></button>
+                    <h4 class="modal-title">(( role|role_to_name ))</h4>
+                </div>
+                <div class="modal-body">
+                    <div data-ng-widget-short-animal-form
+                         data-ng-bind-target-data="target_data"
+                         data-ng-bind-role="role"
+                         data-ng-bind-data="data"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-ng-click="popupSave()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

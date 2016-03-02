@@ -1,0 +1,40 @@
+debug {
+  background: #e38d13;
+  border: 1px dashed #ff0000;
+  padding: 10px 12px;
+  color: #ffffff;
+}
+.row.row-space-bottom {
+  margin-bottom: 12px;
+}
+.row.row-space-bottom-tiny {
+  margin-bottom: 6px;
+}
+.row.row-space-separator {
+  margin-bottom: 12px;
+  border-bottom: 1px solid #eeeeee;
+}
+.row.row-space-separator:last-child,
+.row.row-space-separator .row-space-separator-last {
+  border-bottom: none;
+}
+.separator.separator-light-bottom {
+  margin-bottom: 5px;
+}
+.modal {
+  background: rgba(0, 0, 0, 0.4);
+}
+.modal .modal-dialog {
+  width: 1024px;
+  margin: 30px auto;
+}
+.select2_slim .select2-container .select2-selection--single {
+  height: 30px;
+}
+.select2_slim .select2-container--default .select2-selection--single .select2-selection__rendered {
+  line-height: 28px;
+}
+.select2_right_btn .select2-container .select2-selection--single {
+  border-top-right-radius: 0;
+  border-bottom-right-radius: 0;
+}

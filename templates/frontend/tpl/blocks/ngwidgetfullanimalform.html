@@ -1,0 +1,145 @@
+<script type="text/ng-template" id="tpl_ngwidgetfullanimalform">
+    <div class="animalform">
+
+        <div data-ng-include="'include_animalform'"></div>
+
+        <table class="gendertreetable">
+            <tr>
+                <th>Родители</th>
+                <th>Деды</th>
+                <th>Прадеды</th>
+                <th>Прапрадеды</th>
+            </tr>
+            <tr>
+                <td rowspan="8">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'m'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="4">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmmm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmmf'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmf'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmfm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mmff'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mf'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mfm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mfmm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mfmf'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mff'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mffm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'mfff'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="8">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'f'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="4">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmmm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmmf'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmf'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmfm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fmff'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="4">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'ff'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'ffm'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'ffmm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'ffmf'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td rowspan="2">
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fff'" data-ng-bind-target-data="data"></div>
+                </td>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'fffm'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+            <tr>
+                <td>
+                    <div data-ng-widget-short-animal data-ng-bind-role="'ffff'" data-ng-bind-target-data="data"></div>
+                </td>
+            </tr>
+        </table>
+
+        <br>
+
+        <button class="btn btn-primary" type="button" data-ng-click="saveObject()">Сохранить</button>
+
+        <br>
+        <br>
+        <br>
+    </div>
+</script>

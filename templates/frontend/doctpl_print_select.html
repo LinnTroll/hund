@@ -1,0 +1,46 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Выберите шаблоны для печати "{{ instance }}"</h4>
+            <h6>Модель: {{ model_meta.verbose_name }}</h6>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+        </div>
+    </div>
+
+    {% autopaginate object_list 10 %}
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Формат</th>
+                <th><span class="glyphicon glyphicon-print"></span> Печать</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    {{ object.title }}
+                </td>
+                <td>
+                    {{ object.get_page_format_display }}
+                </td>
+                <td>
+                    <a href="{% url 'core_doctpl_print_preview' %}?{% if request.GET.pk %}pk={{ request.GET.pk }}{% endif %}{% if request.GET.pks %}pks={{ request.GET.pks }}{% endif %}&model={{ request.GET.model }}&tpl={{ object.pk }}" class="btn btn-warning btn-xs">
+                        <span class="glyphicon glyphicon-print"></span>
+                        Выбрать
+                    </a>
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+{% endblock %}

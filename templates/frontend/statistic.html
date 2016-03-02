@@ -1,0 +1,58 @@
+{% extends 'frontend/base.html' %}
+
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Статистика</h4>
+        </div>
+        <div class="col-sm-4">
+        </div>
+    </div>
+
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-4">
+
+            <div class="panel panel-default">
+                <div class="panel-heading">Статистика по собакам</div>
+
+                <table class="table animal-statistic-table">
+                    <tbody>
+                        <tr>
+                            <th class="cell-key">Всего собак</th>
+                            <td class="cell-info">
+                                <span style="font-size: 12px; color: #888888;">
+                                    {{ total_count_gm }}♂ + {{ total_count_gf }}♀
+                                </span>
+                            </td>
+                            <td class="cell-val">{{ total_count }}</td>
+                        </tr>
+                        <tr>
+                            <th class="cell-key">"Наши" собаки</th>
+                            <td class="cell-info"></td>
+                            <td class="cell-val">{{ our_count }}</td>
+                        </tr>
+                        <tr>
+                            <th class="cell-key">Участникик клуба</th>
+                            <td class="cell-info"></td>
+                            <td class="cell-val">{{ reg_count }}</td>
+                        </tr>
+                        <tr>
+                            <th class="cell-key">Кол-во пород</th>
+                            <td class="cell-info"></td>
+                            <td class="cell-val">{{ breed_count }}</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="col-sm-8"></div>
+    </div>
+
+
+
+{% endblock %}

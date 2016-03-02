@@ -1,0 +1,209 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block container %}
+    {% if not extended %}
+        <div class="container">
+    {% else %}
+        <div style="padding: 0 15px;">
+    {% endif %}
+
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-7">
+
+            <table cellpadding="0" cellspacing="0">
+                <tr>
+                    <td>
+                        <h4>Собаки</h4>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>
+                        {% if extended %}
+                            <a href="{% url 'core_animals_list' %}" style="font-size: 11px; text-decoration: none;">
+                                <i class="glyphicon glyphicon-th-large"></i>
+                                Обычный список
+                            </a>
+                        {% else %}
+                            <a href="{% url 'core_animals_list_ex' %}" style="font-size: 11px; text-decoration: none;">
+                                <i class="glyphicon glyphicon-th"></i>
+                                Расширенный список
+                            </a>
+                        {% endif %}
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>
+                        <a href="{% url 'core_animals_export_xls' %}"
+                           class="text-success"
+                           style="font-size: 11px; text-decoration: none;">
+                            <i class="glyphicon glyphicon-export"></i>
+                            Экспорт участников клуба
+                        </a>
+                    </td>
+                    <td>&nbsp;&nbsp;&nbsp;</td>
+                    <td>
+                        <a href="{% url 'core_animals_statistic' %}"
+                           class="text-warning"
+                           style="font-size: 11px; text-decoration: none;">
+                            <i class="glyphicon glyphicon-stats"></i>
+                            Статистика
+                        </a>
+                    </td>
+                </tr>
+            </table>
+        </div>
+        <div class="col-sm-5">
+
+            <table style="width: 100%;">
+                <tbody>
+                <tr>
+                    <td style="padding-right: 12px;">
+                        <a href="{% url 'core_animals_add' %}"
+                           class="btn btn-sm btn-success"><span class="glyphicon glyphicon-plus"></span> Добавить</a>
+                    </td>
+                    <td>
+                        <form class="input-group input-group-sm" method="GET" action="#">
+                            <input type="text" name="search" class="form-control" placeholder="Введите имя или номер"{% if request.GET.search %} value="{{ request.GET.search }}"{% endif %}>
+                            <span class="input-group-btn">
+                                <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                            </span>
+                        </form>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+
+        </div>
+    </div>
+
+    {% autopaginate object_list 50 %}
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Порода</th>
+            <th>Цвет</th>
+            <th>Пол</th>
+            <th>Номер</th>
+            <th>Дата рождения</th>
+            <th>Родители</th>
+            <th>Владелец</th>
+            {% if extended %}
+                <th>Заводчик</th>
+                <th>Клуб</th>
+            {% endif %}
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td class="animal-list-name">
+                    <a href="{% url 'core_animals_edit' pk=object.pk %}">{{ object.get_display }}</a>
+                </td>
+                <td class="animal-list-breed">
+                    {{ object.breed }}
+                </td>
+                <td class="animal-list-color">
+                    {% if object.get_color %}{{ object.get_color }}{% endif %}
+                </td>
+                <td class="animal-list-gender">
+                    {{ object.get_gender_display }}
+                </td>
+                <td class="animal-list-pedigree">
+                    {% if object.get_pedigree_numbers %}
+                        {% for pedigree_number in object.get_pedigree_numbers %}
+                            <div>{{ pedigree_number.number }}</div>
+                        {% endfor %}
+                    {% endif %}
+                    {% if extended %}
+                        {% if object.chip %}
+                            <div class="animal-list-addnumber"><span>Чип:</span> {{ object.chip }}</div>
+                        {% endif %}
+                        {% if object.mark %}
+                            <div class="animal-list-addnumber"><span>Клеймо:</span> {{ object.mark }}</div>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                <td class="animal-list-birthdate">
+                    {% if object.birthdate %}
+                        {{ object.birthdate|date:'Y.m.d' }}
+                    {% endif %}
+                </td>
+                <td class="animal-list-parents">
+                    {% if object.father %}
+                        <div>
+                            <span class="animal-list-gender-symbol">♂</span> <a href="{% url 'core_animals_edit' pk=object.father.pk %}">{{ object.father }}</a>
+                        </div>
+                    {% endif %}
+                    {% if object.mother %}
+                        <div>
+                            <span class="animal-list-gender-symbol">♀</span> <a href="{% url 'core_animals_edit' pk=object.mother.pk %}">{{ object.mother }}</a>
+                        </div>
+                    {% endif %}
+                </td>
+{#                <td class="animal-list-mother">#}
+{#                    {% if object.mother %}#}
+{#                        <a href="{% url 'core_animals_edit' pk=object.mother.pk %}">{{ object.mother }}</a>#}
+{#                    {% endif %}#}
+{#                </td>#}
+                {% if extended %}
+                    <td class="animal-list-kennel">
+                        {% if object.kennel %}
+                            <div>{{ object.kennel }}</div>
+                        {% endif %}
+                        {% if object.kennel_name %}
+                            <div>{{ object.kennel_name }}</div>
+                        {% endif %}
+                        {% if object.kennel_address %}
+                            <div>{{ object.kennel_address }}</div>
+                        {% endif %}
+                    </td>
+                {% endif %}
+                <td class="animal-list-owner">
+                    {% if object.get_owners %}
+                        {% if object.get_owners.0.name %}
+                            <div style="white-space: nowrap;"><i class="glyphicon glyphicon-user"></i> {{ object.get_owners.0.name }}</div>
+                        {% endif %}
+
+                        {% if extended %}
+                            <div class="animal-list-owner-add">
+                                {% if object.get_owners.0.phone %}
+                                    <div><i class="glyphicon glyphicon-earphone"></i> {{ object.get_owners.0.phone }}</div>
+                                {% endif %}
+                                {% if object.get_owners.0.email %}
+                                    <div><i class="glyphicon glyphicon-envelope"></i> <a href="mailto:{{ object.get_owners.0.email }}">{{ object.get_owners.0.email }}</a></div>
+                                {% endif %}
+                                {% if object.get_owners.0.address %}
+                                    <div><i class="glyphicon glyphicon-home"></i> {{ object.get_owners.0.address }}</div>
+                                {% endif %}
+                                {% if object.get_owners.0.work %}
+                                    <div><i class="glyphicon glyphicon-wrench"></i> {{ object.get_owners.0.work }}</div>
+                                {% endif %}
+                            </div>
+                        {% endif %}
+                    {% endif %}
+                </td>
+                {% if extended %}
+                    <td class="animal-list-reg">
+                        {% if object.is_our %}
+                            {% if object.reg_number %}
+                                <div style="white-space: nowrap;"><i class="glyphicon glyphicon-star" style="color: #eea236;"></i> {{ object.reg_number }}</div>
+                            {% else %}
+                                <div><i class="glyphicon glyphicon-star" style="color: #eea236;"></i></div>
+                            {% endif %}
+                            {% if object.reg_date %}
+                                <div>{{ object.reg_date|date:'Y.m.d' }}</div>
+                            {% endif %}
+                        {% endif %}
+                    </td>
+                {% endif %}
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+
+    </div>
+{% endblock %}

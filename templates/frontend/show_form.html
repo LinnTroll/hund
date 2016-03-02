@@ -1,0 +1,63 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags bootstrap3 %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            {% if object %}
+                <h4>Редактирование выставки "{{ object }}"</h4>
+            {% else %}
+                <h4>Создание выставки</h4>
+            {% endif %}
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_edit' pk=group.pk %}">Назад</a>
+        </div>
+    </div>
+
+    <form action="#" method="post" class="form">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-sm-5">
+                {% bootstrap_field form.title %}
+                {% bootstrap_field form.judge %}
+                {% bootstrap_field form.date %}
+
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">{% if object %}Сохранить{% else %}Создать{% endif %}</button>
+                {% endbuttons %}
+            </div>
+            <div class="col-sm-1"></div>
+            <div class="col-sm-6">
+            </div>
+        </div>
+
+        {% if object %}
+
+        <hr>
+        {% if not group.check_in %}
+            <a href="{% url 'core_show_member_add' group=group.pk pk=object.pk %}" class="btn btn-sm btn-success"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить участника</a>
+        {% endif %}
+
+        {% include 'frontend/includes/show_form_table.html' with object_list=object_list  %}
+
+        {% if group.check_in %}
+            <hr>
+            <h5>Дополнительный список</h5>
+            <a href="{% url 'core_show_member_add' group=group.pk pk=object.pk %}" class="btn btn-sm btn-success"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить дополнительного участника</a>
+
+            {% if object_add_list %}
+                {% include 'frontend/includes/show_form_table.html' with object_list=object_add_list %}
+            {% endif %}
+        {% endif %}
+
+        {% endif %}
+    </form>
+
+    <br>
+    <br>
+    <br>
+
+{% endblock %}

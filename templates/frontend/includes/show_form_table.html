@@ -1,0 +1,72 @@
+<table class="table table-condensed">
+    <thead>
+        <tr>
+            <th>Имя</th>
+            <th class="animal-list-number" style="width: 50px;">№</th>
+            <th style="width: 200px;">Порода</th>
+            <th style="width: 50px;">Пол</th>
+            <th style="width: 200px;">Номер родословной</th>
+            <th style="width: 120px;">Класс</th>
+
+            {% if object.group.check_in %}
+                <th style="width: 70px;">Оценка</th>
+                <th style="width: 70px;">Титул</th>
+            {% endif %}
+
+            <th style="width: 20px;"></th>
+            <th style="width: 14px;">
+                <span class="glyphicon glyphicon-print"></span>
+            </th>
+            <th style="width: 14px;">
+                <span class="glyphicon glyphicon-trash"></span>
+            </th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for member in object_list %}
+        <tr>
+            <td class="animal-list-name"><a href="{% url 'core_animals_edit' pk=member.animal.pk %}">{{ member.animal.get_display }}</a></td>
+            <td class="animal-list-number">
+                {% if member.number %}
+                    {{ member.number }}
+                {% else %}
+                    <div class="animal-list-number-empty">-</div>
+                {% endif %}
+            </td>
+            <td class="animal-list-breed">{{ member.animal.breed }}</td>
+            <td class="animal-list-gender">{{ member.animal.get_gender_display }}</td>
+            <td class="animal-list-pedigree">
+                {% if member.animal.get_pedigree_numbers %}
+                    {% for pedigree_number in member.animal.get_pedigree_numbers %}
+                        <div>{{ pedigree_number.number }}</div>
+                    {% endfor %}
+                {% endif %}
+            </td>
+            <td class="animal-list-showclass">{{ member.showclass.short_title }}</td>
+
+            {% if object.group.check_in %}
+                <td class="animal-list-res_rate">
+                    {{ member.res_form.res_rate }}
+                </td>
+                <td class="animal-list-res_title">
+                    {{ member.res_form.res_title }}
+                </td>
+            {% endif %}
+
+            <td></td>
+
+            <td>
+                <a href="{% url 'core_doctpl_print_select' %}?pk={{ member.pk }}&model=core.showmember" class="text-primary" title="Удалить участника">
+                    <span class="glyphicon glyphicon-print"></span>
+                </a>
+            </td>
+
+            <td>
+                <a href="{% url 'core_show_member_delete' pk=member.pk %}" class="text-danger" title="Удалить участника">
+                    <span class="glyphicon glyphicon-remove"></span>
+                </a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>

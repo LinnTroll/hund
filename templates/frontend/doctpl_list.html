@@ -1,0 +1,50 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Шаблоны документов</h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_doctpl_add' %}"
+               class="btn btn-sm btn-success"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить</a>
+        </div>
+    </div>
+
+    {% autopaginate object_list 10 %}
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>Название</th>
+                <th>Формат</th>
+                <th>Модель</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'core_doctpl_edit' pk=object.pk %}">{{ object.title }}</a>
+                </td>
+                <td>
+                    {{ object.get_page_format_display }}
+                </td>
+                <td>
+                    {% with object.get_settings_model_verbose_name as verbose_name %}
+                        {% if verbose_name %}
+                            <div>{{ verbose_name }}</div>
+                        {% else %}
+                            <div class="text-muted">-</div>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+{% endblock %}

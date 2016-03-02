@@ -1,0 +1,30 @@
+{% extends 'frontend/base.html' %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Удаление выставки "{{ object }}"</h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_groups_edit' pk=object.group.pk %}">Назад</a>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-sm-12">
+            <p>
+                Вы действительно хотите удалит выставку "{{ object }}"?
+            </p>
+
+            <form action="#" method="post">{% csrf_token %}
+                <button type="submit" class="btn btn-danger">Удалить</button>
+                <a href="{% url 'core_show_groups_edit' pk=object.group.pk %}" class="btn btn-default">Отмена</a>
+            </form>
+        </div>
+    </div>
+
+
+
+{% endblock %}

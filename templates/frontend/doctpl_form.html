@@ -1,0 +1,68 @@
+{% extends 'frontend/base.html' %}{% load bootstrap3 %}
+
+{% block body_extra_class %}{% if mode == 'print_preview' %}body_doctpl_print body_doctpl_print_preview{% endif %}{% if mode == 'print_done' %}body_doctpl_print body_doctpl_print_done{% endif %}{% endblock %}
+
+{% block content %}
+    {% if mode != 'print_done' %}
+        <h3></h3>
+
+        <div class="row">
+            <div class="col-sm-8">
+                {% if mode == 'default' %}<h4>Создание шаблона</h4>{% endif %}
+                {% if mode == 'print_preview' %}<h4>Предпросмотр шаблона перед печатью</h4>{% endif %}
+            </div>
+            <div class="col-sm-4" style="text-align: right;">
+                {% if mode == 'default' %}
+                    <a href="{% url 'core_doctpl_list' %}">Назад</a>
+                {% endif %}
+                {% if mode == 'print_preview' %}
+                    <a href="{% url 'core_doctpl_print_pdf' %}?{% if request.GET.pk %}pk={{ request.GET.pk }}{% endif %}{% if request.GET.pks %}pks={{ request.GET.pks }}{% endif %}&model={{ request.GET.model }}&tpl={{ request.GET.tpl }}&bg=yes" class="btn btn-warning">
+                        <span class="glyphicon glyphicon-print"></span>
+                        Печать с фоном
+                    </a>
+                    <a href="{% url 'core_doctpl_print_pdf' %}?{% if request.GET.pk %}pk={{ request.GET.pk }}{% endif %}{% if request.GET.pks %}pks={{ request.GET.pks }}{% endif %}&model={{ request.GET.model }}&tpl={{ request.GET.tpl }}&bg=no" class="btn btn-info">
+                        <span class="glyphicon glyphicon-print"></span>
+                        Печать без фона
+                    </a>
+                {% endif %}
+            </div>
+        </div>
+    {% endif %}
+
+    <div class="row"{% if mode == 'print_preview' or mode == 'print_done' %} style="display: none;"{% endif %}>
+        <div class="col-sm-5">
+            <form action="#" method="post" class="form" enctype="multipart/form-data">
+                {% csrf_token %}
+
+                {% bootstrap_field form.title %}
+                {% bootstrap_field form.page_format %}
+                {% bootstrap_field form.image %}
+                <div style="display: none">
+                    {% bootstrap_field form.settings %}
+                </div>
+
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">{% if object %}Сохранить{% else %}Создать{% endif %}</button>
+                {% endbuttons %}
+            </form>
+        </div>
+        <div class="col-sm-7">
+
+        </div>
+    </div>
+
+    {% if object %}
+        <div class="docpreview">
+            <div class="docpreview__controls"{% if mode == 'print_preview' or mode == 'print_done' %} style="display: none;"{% endif %}
+                 data-ng-docpreview-controls
+                 data-ng-bind-models-data="{{ models_data_json }}">
+            </div>
+
+            <div class="docpreview__layer"
+                 style="width: {{ object.page_params.width }}mm; height: {{ object.page_params.height }}mm;{% if object.image and not request.GET.bg == 'no' %} background: url('{{ object.image.url }}') no-repeat top left; background-size: {{ object.page_params.width }}mm auto;{% endif %}"
+                 data-ng-docpreview-dest-layer
+                 data-ng-bind-mode="'{{ mode }}'">
+            </div>
+        </div>
+    {% endif %}
+{% endblock %}

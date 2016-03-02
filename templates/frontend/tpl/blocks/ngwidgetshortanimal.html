@@ -1,0 +1,63 @@
+<script type="text/ng-template" id="tpl_ngwidgetshortanimal">
+    <div class="shortanimal">
+        <div data-ng-animal-popup
+             data-ng-bind-set-data="setData"
+             data-ng-bind-target-data="target_data"
+             data-ng-bind-role="role"
+             data-ng-bind-popup-open="popup_open"></div>
+
+        <div data-ng-show="widget_state === 'open'">
+            <div class="input-group input-group-sm select2_slim select2_right_btn">
+                <select class="form-control"
+                        data-ng-animal-autocomplete
+                        data-ng-bind-target-data="target_data"
+                        data-ng-bind-role="role"
+                        data-ng-bind-set-data="setData"></select>
+                <span class="input-group-btn">
+                    <button class="btn btn-sm" type="button" data-ng-click="editItem()">
+                        <span class="glyphicon glyphicon glyphicon-plus"></span>
+                    </button>
+                </span>
+            </div>
+        </div>
+
+        <div class="shortanimal__info" data-ng-show="widget_state === 'close'">
+            <div class="row" content="shortanimal__info__row" data-ng-show="!!data.name_ru">
+                <div class="col-md-8">
+                    <span>(( data.name_ru )), <span class="shortanimal__info__breed">(( data.breed_data.text ))</span></span>
+                    <span class="shortanimal__info__color" data-ng-show="!!data.color_ru"><span>(</span>(( data.color_ru ))<span>)</span></span>
+                </div>
+                <div class="col-md-4" style="text-align: right;">
+                    <button class="btn btn-xs btn-primary" data-ng-click="editItem()">
+                        <span class="glyphicon glyphicon glyphicon-edit"></span>
+                    </button>
+                    <button class="btn btn-xs btn-danger" data-ng-click="removeItem()">
+                        <span class="glyphicon glyphicon glyphicon-remove"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row" content="shortanimal__info__row" data-ng-show="!data.name_ru && !!data.name_en">
+                <div class="col-md-8">
+                    <span>(( data.name_en )), <span class="shortanimal__info__breed">(( data.breed_data.text ))</span></span>
+                    <span class="shortanimal__info__color" data-ng-show="!!data.color_en"><span>(</span>(( data.color_en ))<span>)</span></span>
+                </div>
+                <div class="col-md-4" style="text-align: right;">
+                    <button class="btn btn-xs btn-primary" data-ng-click="editItem()">
+                        <span class="glyphicon glyphicon glyphicon-edit"></span>
+                    </button>
+                    <button class="btn btn-xs btn-danger" data-ng-click="removeItem()">
+                        <span class="glyphicon glyphicon glyphicon-remove"></span>
+                    </button>
+                </div>
+            </div>
+            <div class="row" content="shortanimal__info__row">
+                <div class="col-md-12">
+                    <span data-ng-repeat="pedigree_number in data.pedigree_numbers">
+                        <span>(( pedigree_number.number ))</span><span data-ng-if="!$last">,</span>
+                    </span>
+                </div>
+            </div>
+        </div>
+
+    </div>
+</script>

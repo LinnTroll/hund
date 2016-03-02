@@ -1,0 +1,41 @@
+<script type="text/ng-template" id="tpl_ngdocpreviewcontrols">
+    <div class="docpreview__controls__panel" data-ng-docpreview-controls-panel>
+        <div class="docpreview__controls__panel__header">
+            <div class="docpreview__controls__panel__header__title"
+                 data-ng-show="show_page === 'models'">Модели</div>
+            <div class="docpreview__controls__panel__header__title"
+                 data-ng-show="show_page === 'fields'">Модель: (( model.verbose_name ))</div>
+        </div>
+        <div class="docpreview__controls__panel__body">
+            <div class="docpreview__controls__panel__body__page"
+                 data-ng-show="show_page === 'models'">
+                <div class="docpreview__controls__panel__body__row docpreview__controls__panel__body__row_model"
+                     data-ng-repeat="model in models_data"
+                     data-ng-click="selectModel(model)">
+                    (( model.verbose_name ))
+                </div>
+            </div>
+
+            <div class="docpreview__controls__panel__body__page"
+                 data-ng-show="show_page === 'fields'">
+                <div class="docpreview__controls__panel__body__controls">
+                    <div class="docpreview__controls__panel__body__controls__button"
+                         data-ng-click="backToStart()">Назад</div>
+                </div>
+
+                <div class="docpreview__controls__panel__body__row docpreview__controls__panel__body__row_field"
+                     data-ng-repeat="field in model.fields"
+                     data-ng-docpreview-controls-panel-drag-field
+                     data-ng-bind-model="model"
+                     data-ng-bind-field="field"
+                     data-model-app-label="(( model.app_label ))"
+                     data-model-name="(( model.model_name ))"
+                     data-field-name="(( field[0] ))"
+                     data-field-label="(( field[1] ))">
+                    (( field[1] ))
+                </div>
+            </div>
+
+        </div>
+    </div>
+</script>

@@ -1,0 +1,40 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            <h4>Каталоги</h4>
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_show_catalogs_add' %}"
+               class="btn btn-sm btn-success"><span class="glyphicon glyphicon glyphicon-plus"></span> Добавить</a>
+        </div>
+    </div>
+
+    {% autopaginate object_list 10 %}
+
+    <table class="table table-condensed">
+        <thead>
+            <tr>
+                <th>№</th>
+                <th>Выставки</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'core_show_catalogs_detail' pk=object.pk %}"><nobr>№ {{ object.pk }}</nobr></a>
+                </td>
+                <td>
+                    {% for show in object.showcatalogitem_set.all %}{{ show }}{% if not forloop.last %}, {% endif %}{% empty %}Выставки не добавлены{% endfor %}
+                </td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+{% endblock %}

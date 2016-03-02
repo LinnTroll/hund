@@ -1,0 +1,68 @@
+<h3></h3>
+
+<div class="row">
+    <div class="col-sm-12">
+        <h5>Потомство:</h5>
+    </div>
+</div>
+
+<table class="table table-condensed">
+    <thead>
+    <tr>
+        <th>Имя</th>
+        <th>Цвет</th>
+        <th>Пол</th>
+        <th>Номер</th>
+        <th>Дата рождения</th>
+        <th>
+            {% if parent_gender == 'm' %}
+                От суки
+            {% else %}
+                От кобеля
+            {% endif %}
+        </th>
+        <th>Владелец</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for object in animals %}
+        <tr>
+            <td>
+                <a href="{% url 'core_animals_edit' pk=object.pk %}">{{ object.name }}</a>
+            </td>
+            <td>
+                {{ object.color }}
+            </td>
+            <td>
+                {{ object.gender }}
+            </td>
+            <td>
+                {% if object.pedigree %}
+                    {{ object.pedigree }}
+                {% endif %}
+            </td>
+            <td>
+                {% if object.birthdate %}
+                    {{ object.birthdate }}
+                {% endif %}
+            </td>
+            <td>
+                {% if parent_gender == 'm' %}
+                    {% if object.father %}
+                        <a href="{% url 'core_animals_edit' pk=object.mother.pk %}">{{ object.mother }}</a>
+                    {% endif %}
+                {% else %}
+                    {% if object.father %}
+                        <a href="{% url 'core_animals_edit' pk=object.father.pk %}">{{ object.father }}</a>
+                    {% endif %}
+                {% endif %}
+            </td>
+            <td>
+                {% if object.owner %}
+                    {{ object.owner }}
+                {% endif %}
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
