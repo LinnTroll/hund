@@ -1,0 +1,17 @@
+import os
+from settings import BASE_DIR
+
+DEBUG = True
+
+TEMPLATE_DEBUG = DEBUG
+
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.mysql',
+        'NAME': 'hund',
+        'USER': 'hund',
+        'PASSWORD': '',
+    }
+}
+
+WKHTMLTOPDF_BIN = os.path.join(BASE_DIR, 'bin', 'wkhtmltopdf.sh')
