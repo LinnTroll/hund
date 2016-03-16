@@ -124,61 +124,108 @@
         <div class="col-md-4" data-ng-class="{'has-error': errors.owners}">
             <div class="row row-space-bottom-tiny">
                 <div class="col-md-12">
-                    <div class="form-horizontal" data-ng-repeat="owner in data.owners track by $index">
-                        <div class="row row-space-bottom-tiny">
-                            <div class="col-sm-offset-3 col-sm-6">
-                                <label class="bold">Владелец<span data-ng-show="data.owners.length > 1"> #(( $index+1 ))</span>:</label>
-                            </div>
-                            <div class="col-sm-3" style="text-align: right;">
-                                <button class="btn btn-danger btn-xs" type="button"
-                                        data-ng-show="data.owners.length > 1"
-                                        data-ng-click="removeOwnerBlock($index)">
+                    <div data-ng-repeat="owner in data.owners track by $index">
+                        <div style="padding-bottom: 8px;" data-ng-if="$index !== 0"></div>
+
+                        <label class="bold">Владелец<span data-ng-show="data.owners.length > 1"> #(( $index+1 ))</span>:</label>
+
+                        <div class="input-group input-group-sm select2_slim select2_max_width select2_right_btn" data-ng-show="!(owner.data.id && !owner.force_open)">
+                            <select class="form-control"
+                                    data-ng-bind-data="owner"
+                                    data-ng-owner-autocomplete></select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-sm" type="button" data-ng-click="openOwnerAddPopup($index)">
+                                    <span class="glyphicon glyphicon glyphicon-plus"></span>
+                                </button>
+                                <button class="btn btn-xs btn-danger" data-ng-click="removeOwnerBlock($index)">
                                     <span class="glyphicon glyphicon glyphicon-remove"></span>
                                 </button>
-                            </div>
+                            </span>
                         </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Имя</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].name">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Адрес</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].address">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">телефон</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].phone">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Email</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].email">
-                            </div>
-                        </div>
-                        <div class="form-group">
-                            <label class="col-sm-3 control-label">Работа</label>
-                            <div class="col-sm-9">
-                                <input type="text" class="form-control input-sm" data-ng-model="data.owners[$index].work">
+
+                        <div class="ownerdie" data-ng-show="(owner.data.id && !owner.force_open)">
+                            <div class="row" content="shortanimal__info__row">
+                                <div class="col-md-10">
+                                    <div class="ownerdie__row ownerdie__row_name">(( owner.data.name ))</div>
+                                    <div class="ownerdie__row ownerdie__row_address">(( owner.data.address ))</div>
+                                    <div class="ownerdie__row ownerdie__row_phone">(( owner.data.phone ))</div>
+                                </div>
+                                <div class="col-md-2" style="text-align: right;">
+                                    <button class="btn btn-xs btn-primary" data-ng-click="editOwnerBlock($index)">
+                                        <span class="glyphicon glyphicon glyphicon-edit"></span>
+                                    </button>
+                                    <div style="padding-bottom: 2px;"></div>
+                                    <button class="btn btn-xs btn-danger" data-ng-click="removeOwnerBlock($index)">
+                                        <span class="glyphicon glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </div>
                             </div>
                         </div>
                     </div>
                 </div>
             </div>
             <div class="row row-space-separator">
-                <div class="col-md-12" style="text-align: right;">
-                    <button class="btn btn-primary btn-sm" type="button" data-ng-click="addOwnerBlock()">
-                        <span class="glyphicon glyphicon glyphicon-plus"></span>
-                    </button>
+                <div class="col-md-12">
+                    <a href="javascript:void(0);"
+                       class="small_link"
+                       data-ng-click="addOwnerBlock()">Добавить владельца</a>
                 </div>
             </div>
         </div>
 
+        <div class="col-md-4" data-ng-class="{'has-error': errors.kennels}">
+            <div class="row row-space-bottom-tiny">
+                <div class="col-md-12">
+                    <div data-ng-repeat="kennel in data.kennels track by $index">
+                        <div style="padding-bottom: 8px;" data-ng-if="$index !== 0"></div>
+
+                        <label class="bold">Заводчик<span data-ng-show="data.kennels.length > 1"> #(( $index+1 ))</span>:</label>
+
+                        <div class="input-group input-group-sm select2_slim select2_max_width select2_right_btn" data-ng-show="!(kennel.data.id && !kennel.force_open)">
+                            <select class="form-control"
+                                    data-ng-bind-data="kennel"
+                                    data-ng-kennel-autocomplete></select>
+                            <span class="input-group-btn">
+                                <button class="btn btn-sm" type="button" data-ng-click="openKennelAddPopup($index)">
+                                    <span class="glyphicon glyphicon glyphicon-plus"></span>
+                                </button>
+                                <button class="btn btn-xs btn-danger" data-ng-click="removeKennelBlock($index)">
+                                    <span class="glyphicon glyphicon glyphicon-remove"></span>
+                                </button>
+                            </span>
+                        </div>
+
+                        <div class="ownerdie" data-ng-show="(kennel.data.id && !kennel.force_open)">
+                            <div class="row" content="shortanimal__info__row">
+                                <div class="col-md-10">
+                                    <div class="ownerdie__row ownerdie__row_name">(( kennel.data.name ))</div>
+                                    <div class="ownerdie__row ownerdie__row_address">(( kennel.data.address ))</div>
+                                    <div class="ownerdie__row ownerdie__row_phone">(( kennel.data.phone ))</div>
+                                </div>
+                                <div class="col-md-2" style="text-align: right;">
+                                    <button class="btn btn-xs btn-primary" data-ng-click="editKennelBlock($index)">
+                                        <span class="glyphicon glyphicon glyphicon-edit"></span>
+                                    </button>
+                                    <div style="padding-bottom: 2px;"></div>
+                                    <button class="btn btn-xs btn-danger" data-ng-click="removeKennelBlock($index)">
+                                        <span class="glyphicon glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="row row-space-separator">
+                <div class="col-md-12">
+                    <a href="javascript:void(0);"
+                       class="small_link"
+                       data-ng-click="addKennelBlock()">Добавить заводчика</a>
+                </div>
+            </div>
+        </div>
+
+        {% comment %}
         <div class="col-md-4">
             <div class="form-horizontal">
                 <div class="row row-space-bottom-tiny">
@@ -206,6 +253,8 @@
                 </div>
             </div>
         </div>
+        {% endcomment %}
+
 
         <div class="col-sm-offset-1 col-md-3">
             <div class="form-horizontal">

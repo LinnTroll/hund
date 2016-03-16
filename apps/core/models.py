@@ -67,9 +67,9 @@ class Animal(models.Model):
     father = models.ForeignKey('self', verbose_name=u'Отец', blank=True, null=True, related_name='animal_father_set')
     mother = models.ForeignKey('self', verbose_name=u'Мать', blank=True, null=True, related_name='animal_mother_set')
 
-    kennel = models.CharField(u'Питомник/клуб', max_length=100, blank=True, null=True)
-    kennel_name = models.CharField(u'Заводчик', max_length=100, blank=True, null=True)
-    kennel_address = models.CharField(u'Адрес заводчика', max_length=250, blank=True, null=True)
+    # kennel = models.CharField(u'Питомник/клуб', max_length=100, blank=True, null=True)
+    # kennel_name = models.CharField(u'Заводчик', max_length=100, blank=True, null=True)
+    # kennel_address = models.CharField(u'Адрес заводчика', max_length=250, blank=True, null=True)
 
     photo = models.ImageField(u'Фото', upload_to='animals', blank=True, null=True)
 
@@ -126,17 +126,40 @@ class Animal(models.Model):
         if not owners:
             owners = [{
                 'id': None,
-                'name': '',
-                'address': '',
-                'phone': '',
-                'email': '',
+                'data': {
+                    'name': '',
+                    'address': '',
+                    'phone': '',
+                    'email': '',
+                    'work': '',
+                },
             }, ]
         return owners
+
+    def get_kennels(self):
+        kennels_qs = self.animalkennel_set.all()
+        kennels = [x.as_dict() for x in kennels_qs]
+        if not kennels:
+            kennels = [{
+                'id': None,
+                'data': {
+                    'name': '',
+                    'address': '',
+                    'breeder': ''
+                },
+            }, ]
+        return kennels
 
     def get_last_owner(self):
         owners = self.animalowner_set.all()
         if owners:
             return owners[0]
+        return None
+
+    def get_last_kennel(self):
+        kennels = self.animalkennel_set.all()
+        if kennels:
+            return kennels[0]
         return None
 
     def get_titles(self):
@@ -198,13 +221,14 @@ class Animal(models.Model):
             'birthdate': self.get_birthdate_formated(),
             'mark': self.mark,
             'chip': self.chip,
-            'kennel': self.kennel,
-            'kennel_name': self.kennel_name,
-            'kennel_address': self.kennel_address,
+            # 'kennel': self.kennel,
+            # 'kennel_name': self.kennel_name,
+            # 'kennel_address': self.kennel_address,
             'breed': self.breed.pk,
             'breed_data': self.breed.as_dict(),
             'pedigree_numbers': self.get_pedigree_numbers(),
             'owners': self.get_owners(),
+            'kennels': self.get_kennels(),
             'titles': self.get_titles(),
             'is_our': self.is_our,
             'reg_number': self.reg_number,
@@ -234,10 +258,15 @@ class Animal(models.Model):
             ('chip', u'Чип'),
             ('father__get_display', u'Имя отца'),
             ('mother__get_display', u'Имя матери'),
-            ('get_last_owner__name', u'Владелец'),
-            ('kennel', u'Питомник'),
-            ('kennel_name', u'Заводчик'),
-            ('kennel_address', u'Адрес заводчика'),
+            ('get_last_owner__owner__name', u'Владелец'),
+
+            ('get_last_kennel__kennel__name', u'Питомник'),
+            ('get_last_kennel__kennel__breeder', u'Заводчик'),
+            ('get_last_kennel__kennel__address', u'Адрес заводчика'),
+
+            # ('kennel', u'Питомник'),
+            # ('kennel_name', u'Заводчик'),
+            # ('kennel_address', u'Адрес заводчика'),
         ]
 
     def __unicode__(self):
@@ -274,12 +303,11 @@ class AnimalPedigreeNumber(models.Model):
         return self.get_display()
 
 
-class AnimalOwner(models.Model):
-    animal = models.ForeignKey(Animal, verbose_name=u'Животное')
+class Owner(models.Model):
     name = models.CharField(u'Имя', max_length=100)
     address = models.CharField(u'Адрес', max_length=250, blank=True, null=True)
     phone = models.CharField(u'Телефон', max_length=60, blank=True, null=True)
-    email = models.EmailField(u'Email', blank=True, null=True)
+    email = models.CharField(u'Email', max_length=1000, blank=True, null=True)
     work = models.CharField(u'Место работы', max_length=2000, blank=True, null=True)
     created_at = models.DateTimeField(u'Создан', auto_now_add=True)
 
@@ -289,16 +317,87 @@ class AnimalOwner(models.Model):
         ordering = ('-id', )
 
     def get_display(self):
-        return u'%s, %s' % (self.animal, self.name)
+        return self.name
 
     def as_dict(self):
         return {
             'id': self.pk,
+            'pk': self.pk,
+            'text': self.get_display(),
             'name': self.name,
             'address': self.address,
             'phone': self.phone,
             'email': self.email,
             'work': self.work,
+        }
+
+    def __unicode__(self):
+        return self.get_display()
+
+
+class AnimalOwner(models.Model):
+    animal = models.ForeignKey(Animal, verbose_name=u'Животное')
+    owner = models.ForeignKey(Owner, verbose_name=u'Владелец')
+
+    class Meta:
+        verbose_name = u'Владелец животного'
+        verbose_name_plural = u'Владелецы животных'
+
+    def get_display(self):
+        return u'%s, %s' % (self.animal, self.owner)
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'data': self.owner.as_dict(),
+        }
+
+    def __unicode__(self):
+        return self.get_display()
+
+
+class Kennel(models.Model):
+    name = models.CharField(u'Питомник/клуб', max_length=100, blank=True, null=True)
+    breeder = models.CharField(u'Заводчик', max_length=100, blank=True, null=True)
+    address = models.CharField(u'Адрес заводчика', max_length=250, blank=True, null=True)
+
+    class Meta:
+        verbose_name = u'Питомник'
+        verbose_name_plural = u'Питомники'
+        ordering = ('-id', )
+
+    def get_display(self):
+        return self.name
+
+    def as_dict(self):
+        return {
+            'id': self.pk,
+            'pk': self.pk,
+            'text': self.get_display(),
+            'name': self.name,
+            'breeder': self.breeder,
+            'address': self.address,
+        }
+
+    def __unicode__(self):
+        return self.get_display()
+
+
+class AnimalKennel(models.Model):
+    animal = models.ForeignKey(Animal, verbose_name=u'Животное')
+    kennel = models.ForeignKey(Kennel, verbose_name=u'Питомник')
+
+    class Meta:
+        verbose_name = u'Питомник животного'
+        verbose_name_plural = u'Питомники животных'
+
+    def get_display(self):
+        return u'%s, %s' % (self.animal, self.kennel)
+
+    def as_dict(self):
+        return {
+            'id': self.id,
+            'data': self.kennel.as_dict(),
         }
 
     def __unicode__(self):

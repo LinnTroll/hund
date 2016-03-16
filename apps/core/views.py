@@ -7,18 +7,20 @@ from subprocess import call
 
 from django.conf import settings
 from django.db.models import Q, Count, get_model
-from django.views.generic import View, TemplateView, ListView, UpdateView, CreateView, DetailView, DeleteView
+from django.views.generic import View, TemplateView, ListView, UpdateView, CreateView, DetailView, DeleteView, FormView
 from django.core.urlresolvers import reverse
 from django.http import HttpResponse, HttpResponseForbidden, HttpResponseBadRequest, Http404
 from django.shortcuts import redirect
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth import authenticate, login, logout
 
-from .models import (Breed, Animal, AnimalPedigreeNumber, AnimalOwner, AnimalTitle, ShowClass,
+from .models import (Breed, Animal, AnimalPedigreeNumber, AnimalOwner, AnimalTitle, ShowClass, Owner,
+                     Kennel, AnimalKennel,
                      ShowGroup, ShowMember, Show,
                      ShowCatalog, ShowCatalogItem,
                      DocTemplate, DocTemplateElement)
 from .forms import (AnimalForm, DoctplSelectForm, AnimalPedigreeNumberForm, AnimalOwnerForm, AnimalTitleForm,
+                    OwnerForm, KennelForm,
                     ShowGroupCreateForm,
                     ShowCreateForm, ShowMemberCreateForm, ShowMemberAdditionCreateForm,
                     ShowCatalogItemForm, DocTemplateForm)
@@ -650,14 +652,15 @@ class AjaxAnimalCreateView(View):
         else:
             errors['pedigree_numbers'] = [u'Вы должны ввести хотябы 1 номер родословной', ]
 
-        owners = filter(lambda x: x and any(x.values()), data.get('owners', []))
+        owners = filter(lambda x: x.get('data', {}).get('id', None), data.get('owners', []))
 
-        for owner in owners:
-            owner_form = AnimalOwnerForm(data=owner)
-            if not owner_form.is_valid():
-                error_values = owner_form.errors.values()
-                if error_values:
-                    errors['owners'] = list(error_values[0])
+        # unique list by owner id
+        owners = dict([(x['data']['id'], x) for x in owners]).values()
+
+        kennels = filter(lambda x: x.get('data', {}).get('id', None), data.get('kennels', []))
+
+        # unique list by owner id
+        kennels = dict([(x['data']['id'], x) for x in kennels]).values()
 
         titles = filter(lambda x: x and any(x.values()), data.get('titles', []))
 
@@ -708,34 +711,51 @@ class AjaxAnimalCreateView(View):
             new_owners_ids = set(filter(bool, [x['id'] for x in owners]))
 
             fordel_owners_ids = exists_owners_ids - new_owners_ids
-
             if fordel_owners_ids:
                 AnimalOwner.objects.filter(pk__in=fordel_owners_ids).delete()
 
             for owner in owners:
-                owner_instance = None
-
-                owner_id = owner.get('id', None)
-                if owner_id:
+                owner_instance = Owner.objects.get(pk=owner['data']['id'])
+                animalowner_instance = None
+                animalowner_id = owner.get('id', None)
+                if animalowner_id:
                     try:
-                        owner_instance = AnimalOwner.objects.get(pk=owner_id)
+                        animalowner_instance = AnimalOwner.objects.get(pk=animalowner_id)
                     except AnimalOwner.DoesNotExist:
                         pass
 
-                if owner_instance:
-                    owner_instance.name = owner['name']
-                    owner_instance.address = owner['address']
-                    owner_instance.phone = owner['phone']
-                    owner_instance.email = owner['email']
-                    owner_instance.work = owner['work']
-                    owner_instance.save()
+                if animalowner_instance:
+                    animalowner_instance.owner = owner_instance
                 else:
                     AnimalOwner.objects.create(
                         animal=animal,
-                        name=owner['name'],
-                        address=owner['address'],
-                        phone=owner['phone'],
-                        email=owner['email'],
+                        owner=owner_instance,
+                    )
+
+            # kennels
+            exists_kennels_ids = set([x[0] for x in animal.animalkennel_set.values_list('id')])
+            new_kennels_ids = set(filter(bool, [x['id'] for x in kennels]))
+
+            fordel_kennels_ids = exists_kennels_ids - new_kennels_ids
+            if fordel_kennels_ids:
+                AnimalKennel.objects.filter(pk__in=fordel_kennels_ids).delete()
+
+            for kennel in kennels:
+                kennel_instance = Kennel.objects.get(pk=kennel['data']['id'])
+                animalkennel_instance = None
+                animalkennel_id = kennel.get('id', None)
+                if animalkennel_id:
+                    try:
+                        animalkennel_instance = AnimalKennel.objects.get(pk=animalkennel_id)
+                    except AnimalKennel.DoesNotExist:
+                        pass
+
+                if animalkennel_instance:
+                    animalkennel_instance.kennel = kennel_instance
+                else:
+                    AnimalKennel.objects.create(
+                        animal=animal,
+                        kennel=kennel_instance,
                     )
 
             # titles
@@ -845,6 +865,44 @@ class AjaxAnimalSearchView(View):
                 Q(animalpedigreenumber__number__icontains=q)
             ).distinct()[:10]
         return HttpResponse(json.dumps([x.as_dict() for x in animals]), content_type='application/json')
+
+
+class AjaxOwnerSearchView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+
+        q = request.GET.get('q', None)
+        owners = Owner.objects.all()
+        if q:
+            owners = owners.filter(
+                Q(name__icontains=q) |
+                Q(address__icontains=q) |
+                Q(phone__icontains=q)
+            )
+        owners = owners.annotate(Count('animalowner')).order_by('-animalowner__count')
+        owners = owners.distinct()[:10]
+        return HttpResponse(json.dumps([dict(x.as_dict(), count=x.animalowner__count) for x in owners]),
+                            content_type='application/json')
+
+
+class AjaxKennelSearchView(View):
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+
+        q = request.GET.get('q', None)
+        kennels = Kennel.objects.all()
+        if q:
+            kennels = kennels.filter(
+                Q(name__icontains=q) |
+                Q(breeder__icontains=q) |
+                Q(address__icontains=q)
+            )
+        kennels = kennels.annotate(Count('animalkennel')).order_by('-animalkennel__count')
+        kennels = kennels.distinct()[:10]
+        return HttpResponse(json.dumps([dict(x.as_dict(), count=x.animalkennel__count) for x in kennels]),
+                            content_type='application/json')
 
 
 class ShowGroupsListView(ListView):
@@ -1356,4 +1414,139 @@ class AnimalsStatisticView(TemplateView):
         context_data['our_count'] = animals_our.count()
         context_data['reg_count'] = animals_our.exclude(reg_number=None).count()
         context_data['breed_count'] = animals.values('breed').annotate(Count('breed')).count()
+        return context_data
+
+
+
+class AjaxAnimalOwnerFormView(FormView):
+    model = Owner
+    form_class = OwnerForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+
+        data = json.loads(request.body)
+        form = self.form_class(data)
+
+        if form.is_valid():
+            owner = form.save()
+            return HttpResponse(json.dumps({
+                'status': 'success',
+                'owner': owner.as_dict(),
+            }), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({
+                'status': 'fail',
+                'errors': form.errors,
+            }), content_type='application/json')
+
+
+
+class AjaxAnimalKennelFormView(FormView):
+    model = Kennel
+    form_class = KennelForm
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return HttpResponseForbidden()
+
+        data = json.loads(request.body)
+        form = self.form_class(data)
+
+        if form.is_valid():
+            kennel = form.save()
+            return HttpResponse(json.dumps({
+                'status': 'success',
+                'kennel': kennel.as_dict(),
+            }), content_type='application/json')
+        else:
+            return HttpResponse(json.dumps({
+                'status': 'fail',
+                'errors': form.errors,
+            }), content_type='application/json')
+
+
+
+class OwnersListView(ListView):
+    template_name = 'frontend/owners_list.html'
+    model = Owner
+    view = 'owners'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        return super(OwnersListView, self).dispatch(request, *args, **kwargs)
+
+
+class OwnersFormView(FormView):
+    template_name = 'frontend/owner_form.html'
+    model = Owner
+    form_class = OwnerForm
+    view = 'owners'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        self.object = None
+        pk = kwargs.get('pk', None)
+        if pk:
+            try:
+                self.object = self.model.objects.get(pk=pk)
+            except self.model.DoesNotExist:
+                raise Http404
+        return super(OwnersFormView, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class):
+        return form_class(self.request.POST or None, instance=self.object)
+
+    def form_valid(self, form):
+        instance = form.save()
+        return redirect('core_owner_edit', pk=instance.pk)
+
+    def get_context_data(self, **kwargs):
+        context_data = super(OwnersFormView, self).get_context_data(**kwargs)
+        context_data['object'] = self.object
+        return context_data
+
+
+class KennelsListView(ListView):
+    template_name = 'frontend/kennels_list.html'
+    model = Kennel
+    view = 'kennels'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        return super(KennelsListView, self).dispatch(request, *args, **kwargs)
+
+
+class KennelsFormView(FormView):
+    template_name = 'frontend/kennel_form.html'
+    model = Kennel
+    form_class = KennelForm
+    view = 'kennels'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        self.object = None
+        pk = kwargs.get('pk', None)
+        if pk:
+            try:
+                self.object = self.model.objects.get(pk=pk)
+            except self.model.DoesNotExist:
+                raise Http404
+        return super(KennelsFormView, self).dispatch(request, *args, **kwargs)
+
+    def get_form(self, form_class):
+        return form_class(self.request.POST or None, instance=self.object)
+
+    def form_valid(self, form):
+        instance = form.save()
+        return redirect('core_kennel_edit', pk=instance.pk)
+
+    def get_context_data(self, **kwargs):
+        context_data = super(KennelsFormView, self).get_context_data(**kwargs)
+        context_data['object'] = self.object
         return context_data

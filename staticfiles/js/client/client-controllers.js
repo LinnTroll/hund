@@ -10,11 +10,26 @@ hund.controller('AnimalFormCtrl', function($scope, $rootScope, $http, uwn) {
 
     $scope.empty_owner = {
         id: null,
-        name: '',
-        address: '',
-        phone: '',
-        email: '',
-        work: ''
+        force_open: false,
+        data: {
+            id: null,
+            name: '',
+            address: '',
+            phone: '',
+            email: '',
+            work: ''
+        }
+    };
+
+    $scope.empty_kennel = {
+        id: null,
+        force_open: false,
+        data: {
+            id: null,
+            name: '',
+            address: '',
+            breeder: ''
+        }
     };
 
     $scope.empty_title = {
@@ -53,11 +68,9 @@ hund.controller('AnimalFormCtrl', function($scope, $rootScope, $http, uwn) {
                 breed: _initial_breed,
                 mark: '',
                 chip: '',
-                kennel: '',
-                kennel_name: '',
-                kennel_address: '',
                 pedigree_numbers: [_.clone($scope.empty_pedigree_number)],
                 owners: [_.clone($scope.empty_owner)],
+                kennels: [_.clone($scope.empty_kennel)],
                 titles: [_.clone($scope.empty_title)],
                 is_our: false,
                 reg_number: null,
@@ -104,8 +117,35 @@ hund.controller('AnimalFormCtrl', function($scope, $rootScope, $http, uwn) {
         $scope.data.owners.push(_.clone($scope.empty_owner));
     };
 
+    $scope.editOwnerBlock = function(index) {
+        $scope.data.owners[index].force_open = true;
+        //$scope.data.owners.push(_.clone($scope.empty_owner));
+    };
+
     $scope.removeOwnerBlock = function(index) {
         $scope.data.owners = _.filter($scope.data.owners, function(e, i) {
+            return i !== index;
+        });
+    };
+
+    $scope.openOwnerAddPopup = function(index) {
+        $rootScope.$broadcast('show_owner_add_popup', function(new_owner) {
+            var owner = $scope.data.owners[index];
+            owner.data = new_owner;
+            owner.force_open = false;
+        });
+    };
+
+    $scope.addKennelBlock = function() {
+        $scope.data.kennels.push(_.clone($scope.empty_kennel));
+    };
+
+    $scope.editKennelBlock = function(index) {
+        $scope.data.kennels[index].force_open = true;
+    };
+
+    $scope.removeKennelBlock = function(index) {
+        $scope.data.kennels = _.filter($scope.data.kennels, function(e, i) {
             return i !== index;
         });
     };
@@ -117,6 +157,14 @@ hund.controller('AnimalFormCtrl', function($scope, $rootScope, $http, uwn) {
     $scope.removeTitleRow = function(index) {
         $scope.data.titles = _.filter($scope.data.titles, function(e, i) {
             return i !== index;
+        });
+    };
+
+    $scope.openKennelAddPopup = function(index) {
+        $rootScope.$broadcast('show_kennel_add_popup', function(new_kennel) {
+            var kennel = $scope.data.kennels[index];
+            kennel.data = new_kennel;
+            kennel.force_open = false;
         });
     };
 

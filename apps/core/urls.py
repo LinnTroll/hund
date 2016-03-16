@@ -7,6 +7,10 @@ from .views import (
     AnimalEditView,
     AnimalsListExportXLSView,
     AnimalsStatisticView,
+    OwnersListView,
+    OwnersFormView,
+    KennelsListView,
+    KennelsFormView,
     LoginView,
     LogoutView,
     ShowGroupsListView,
@@ -38,6 +42,10 @@ from .views import (
     AjaxBreedSearchView,
     AjaxAnimalCreateView,
     AjaxAnimalSearchView,
+    AjaxOwnerSearchView,
+    AjaxKennelSearchView,
+    AjaxAnimalOwnerFormView,
+    AjaxAnimalKennelFormView
 )
 
 
@@ -49,6 +57,15 @@ urlpatterns = patterns('',
     url(r'^edit/(?P<pk>\d+)/$', AnimalEditView.as_view(), name='core_animals_edit'),
     url(r'^list/export/xls/$', AnimalsListExportXLSView.as_view(), name='core_animals_export_xls'),
     url(r'^statistic/$', AnimalsStatisticView.as_view(), name='core_animals_statistic'),
+
+    url(r'^owners/list/$', OwnersListView.as_view(), name='core_owners_list'),
+    url(r'^owners/add/$', OwnersFormView.as_view(), name='core_owner_create'),
+    url(r'^owners/edit/(?P<pk>\d+)/$', OwnersFormView.as_view(), name='core_owner_edit'),
+
+    url(r'^kennels/list/$', KennelsListView.as_view(), name='core_kennels_list'),
+    url(r'^kennels/add/$', KennelsFormView.as_view(), name='core_kennel_create'),
+    url(r'^kennels/edit/(?P<pk>\d+)/$', KennelsFormView.as_view(), name='core_kennel_edit'),
+
     url(r'^login/$', LoginView.as_view(), name='core_login'),
     url(r'^logout/$', LogoutView.as_view(), name='core_logout'),
     url(r'^show/groups/list/$', ShowGroupsListView.as_view(), name='core_show_groups_list'),
@@ -93,6 +110,10 @@ urlpatterns = patterns('',
     url(r'^ajax/breed/search/$', AjaxBreedSearchView.as_view(), name='core_ajax_breed_search'),
     url(r'^ajax/animal/create/$', AjaxAnimalCreateView.as_view(), name='core_ajax_animal_create'),
     url(r'^ajax/animal/search/$', AjaxAnimalSearchView.as_view(), name='core_ajax_animal_search'),
+    url(r'^ajax/owner/search/$', AjaxOwnerSearchView.as_view(), name='core_ajax_owner_search'),
+    url(r'^ajax/kennel/search/$', AjaxKennelSearchView.as_view(), name='core_ajax_kennel_search'),
+    url(r'^ajax/owner/create/$', AjaxAnimalOwnerFormView.as_view(), name='core_ajax_owner_create'),
+    url(r'^ajax/kennel/create/$', AjaxAnimalKennelFormView.as_view(), name='core_ajax_kennel_create'),
 )
 
 

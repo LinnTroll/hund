@@ -229,6 +229,136 @@ hund.directive('ngAnimalAutocomplete', function() {
     };
 });
 
+hund.directive('ngOwnerAutocomplete', function() {
+    return {
+        scope: {
+            'bind_data': '=ngBindData'
+        },
+        link: function($scope, $element, attrs) {
+            var selct2_config = {
+                ajax: {
+                    url: ROUTER.core_ajax_owner_search,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    }
+                },
+                templateResult: function(item) {
+                    if (item.id === undefined) {
+                        return item.text;
+                    } else {
+                        return $('' +
+                        '<div class="owner__autocompliterow">' +
+                        '    <div class="owner__autocompliterow__line">' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_name">' + item.name  + '</div>' +
+                        (item.phone ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_phone">' + item.phone + '</div>' +
+                        '' : '') +
+                        '    </div>' +
+                        ((item.address || item.count > 0) ? '' +
+                        '    <div class="owner__autocompliterow__line">' +
+                        ((item.count > 0) ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_count">Собак: ' + item.count + '</div>' +
+                        '' : '') +
+                        (item.address ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_address">' + item.address + '</div>' +
+                        '' : '') +
+                        '    </div>' +
+                        '' : '') +
+                        '</div>');
+                    }
+                }
+            };
+            setTimeout(function() {
+                $element.select2(selct2_config);
+                $element.on('select2:select', function(e) {
+                    if ($scope.bind_data) {
+                        $scope.bind_data.id = null;
+                        $scope.bind_data.force_open = false;
+                        $scope.bind_data.data = e.params.data;
+                        $scope.$apply();
+                    }
+                });
+            }, 100);
+        }
+    };
+});
+
+
+
+hund.directive('ngKennelAutocomplete', function() {
+    return {
+        scope: {
+            'bind_data': '=ngBindData'
+        },
+        link: function($scope, $element, attrs) {
+            var selct2_config = {
+                ajax: {
+                    url: ROUTER.core_ajax_kennel_search,
+                    dataType: 'json',
+                    delay: 250,
+                    data: function(params) {
+                        return {
+                            q: params.term
+                        };
+                    },
+                    processResults: function(data) {
+                        return {
+                            results: data
+                        };
+                    }
+                },
+                templateResult: function(item) {
+                    if (item.id === undefined) {
+                        return item.text;
+                    } else {
+                        return $('' +
+                        '<div class="owner__autocompliterow">' +
+                        '    <div class="owner__autocompliterow__line">' +
+                        (item.name ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_name">' + item.name + '</div>' +
+                        '' : '') +
+                        (item.breeder ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_phone">' + item.breeder + '</div>' +
+                        '' : '') +
+                        '    </div>' +
+                        ((item.address || item.count > 0) ? '' +
+                        '    <div class="owner__autocompliterow__line">' +
+                        ((item.count > 0) ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_count">Собак: ' + item.count + '</div>' +
+                        '' : '') +
+                        (item.address ? '' +
+                        '        <div class="owner__autocompliterow__cell owner__autocompliterow__cell_address">' + item.address + '</div>' +
+                        '' : '') +
+                        '    </div>' +
+                        '' : '') +
+                        '</div>');
+                    }
+                }
+            };
+            setTimeout(function() {
+                $element.select2(selct2_config);
+                $element.on('select2:select', function(e) {
+                    if ($scope.bind_data) {
+                        $scope.bind_data.id = null;
+                        $scope.bind_data.force_open = false;
+                        $scope.bind_data.data = e.params.data;
+                        $scope.$apply();
+                    }
+                });
+            }, 100);
+        }
+    };
+});
+
 hund.directive('ngAnimalPopup', function() {
     return {
         templateUrl: 'tpl_nganimalpopup',
@@ -657,6 +787,138 @@ hund.directive('ngPopupAnimalCreateFormWarnings', function() {
         },
         link: function($scope, $element, attrs) {
             $scope.$modal = $element.find('.modal');
+        }
+    }
+});
+
+
+hund.directive('ngOwnerPopup', function() {
+    return {
+        scope: true,
+        templateUrl: 'tpl_ngownerpopup',
+        controller: function($scope, $http) {
+            $scope.initFormData = function() {
+                $scope.form = {
+                    name: '',
+                    address: '',
+                    phone: '',
+                    email: '',
+                    work: ''
+                };
+            };
+
+            $scope.success_callback = null;
+
+            $scope.popup_open = false;
+
+            $scope.showPopup = function() {
+                $scope.popup_open = true;
+                $scope.initFormData();
+            };
+
+            $scope.hidePopup = function() {
+                $scope.popup_open = false;
+            };
+
+            $scope.popupSave = function() {
+                var $groups = $scope.$element.find('.form-group');
+                $groups.removeClass('has-error');
+
+                $http({
+                    method: 'POST',
+                    url: ROUTER.core_ajax_owner_create,
+                    data: $scope.form
+                })
+                    .success(function(data) {
+                        if (data.status === 'fail') {
+                            for (var key in data.errors) {
+                                var $input = $scope.$element.find('[name=' + key +']');
+                                var $group = $input.parents('.form-group');
+                                $group.addClass('has-error');
+                            }
+                        } else {
+                            if ($scope.success_callback !== null) {
+                                $scope.success_callback.apply(undefined, [data.owner]);
+                                $scope.hidePopup();
+                            }
+                        }
+                    });
+            };
+
+            $scope.$on('show_owner_add_popup', function (e, callback) {
+                $scope.success_callback = callback;
+                $scope.showPopup();
+            });
+
+            $scope.initFormData();
+        },
+        link: function($scope, $element, attrs) {
+            $scope.$element = $element;
+        }
+    }
+});
+
+
+hund.directive('ngKennelPopup', function() {
+    return {
+        scope: true,
+        templateUrl: 'tpl_ngkennelpopup',
+        controller: function($scope, $http) {
+            $scope.initFormData = function() {
+                $scope.form = {
+                    name: '',
+                    breeder: '',
+                    address: ''
+                };
+            };
+
+            $scope.success_callback = null;
+
+            $scope.popup_open = false;
+
+            $scope.showPopup = function() {
+                $scope.popup_open = true;
+                $scope.initFormData();
+            };
+
+            $scope.hidePopup = function() {
+                $scope.popup_open = false;
+            };
+
+            $scope.popupSave = function() {
+                var $groups = $scope.$element.find('.form-group');
+                $groups.removeClass('has-error');
+
+                $http({
+                    method: 'POST',
+                    url: ROUTER.core_ajax_kennel_create,
+                    data: $scope.form
+                })
+                    .success(function(data) {
+                        if (data.status === 'fail') {
+                            for (var key in data.errors) {
+                                var $input = $scope.$element.find('[name=' + key +']');
+                                var $group = $input.parents('.form-group');
+                                $group.addClass('has-error');
+                            }
+                        } else {
+                            if ($scope.success_callback !== null) {
+                                $scope.success_callback.apply(undefined, [data.kennel]);
+                                $scope.hidePopup();
+                            }
+                        }
+                    });
+            };
+
+            $scope.$on('show_kennel_add_popup', function (e, callback) {
+                $scope.success_callback = callback;
+                $scope.showPopup();
+            });
+
+            $scope.initFormData();
+        },
+        link: function($scope, $element, attrs) {
+            $scope.$element = $element;
         }
     }
 });

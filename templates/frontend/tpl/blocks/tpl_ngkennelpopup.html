@@ -1,0 +1,39 @@
+<script type="text/ng-template" id="tpl_ngkennelpopup">
+    <div class="ownerpopup modal" style="display: block;" data-ng-show="popup_open">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-ng-click="hidePopup()"><span>&times;</span></button>
+                    <h4 class="modal-title">Добавление заводчика</h4>
+                </div>
+                <div class="modal-body">
+                    <form class="form-horizontal">
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Питомник/клуб</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="name" data-ng-model="form.name">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Заводчик</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="breeder" data-ng-model="form.breeder">
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="col-sm-3 control-label">Адрес заводчика</label>
+                            <div class="col-sm-9">
+                                <input type="text" class="form-control" name="address" data-ng-model="form.address">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" data-ng-click="popupSave()">Сохранить</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</script>

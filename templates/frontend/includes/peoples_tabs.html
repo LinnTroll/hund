@@ -1,0 +1,10 @@
+<div class="peoplestabs">
+    <ul class="nav nav-tabs">
+        <li{% if view.view == 'owners' %} class="active"{% endif %}>
+            <a href="{% url 'core_owners_list' %}">Владельцы</a>
+        </li>
+        <li{% if view.view == 'kennels' %} class="active"{% endif %}>
+            <a href="{% url 'core_kennels_list' %}">Заводчики</a>
+        </li>
+    </ul>
+</div>

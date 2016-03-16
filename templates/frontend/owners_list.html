@@ -1,0 +1,47 @@
+{% extends 'frontend/base.html' %}{% load pagination_tags %}
+
+{% block content %}
+    <h3></h3>
+
+    {% include 'frontend/includes/peoples_tabs.html' %}
+
+    <br>
+        <a href="{% url 'core_owner_create' %}" class="btn btn-sm btn-success">
+            <span class="glyphicon glyphicon glyphicon-plus"></span>
+            Добавить владельца
+        </a>
+    <br>
+
+    {% autopaginate object_list 50 %}
+
+    <table class="table table-condensed">
+        <thead>
+        <tr>
+            <th>Имя</th>
+            <th>Телефон</th>
+            <th>E-mail</th>
+            <th>Адрес</th>
+            <th>Место работы</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for object in object_list %}
+            <tr>
+                <td>
+                    <a href="{% url 'core_owner_edit' pk=object.pk %}">{{ object.name }}</a>
+                </td>
+                <td>
+                    {{ object.phone }}
+                </td>
+                <td>
+                    {{ object.email }}
+                </td>
+                <td>{{ object.address }}</td>
+                <td>{{ object.work }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    {% paginate %}
+{% endblock %}

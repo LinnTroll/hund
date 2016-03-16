@@ -1,6 +1,7 @@
 from django.contrib import admin
 
-from .models import (BreedGroup, Breed, Animal, AnimalOwner, AnimalPedigreeNumber, AnimalTitle,
+from .models import (BreedGroup, Breed, Animal, Owner, AnimalPedigreeNumber, AnimalTitle, AnimalOwner,
+                     Kennel, AnimalKennel,
                      Show, ShowClass, ShowMember, ShowGroup,
                      ShowCatalog, ShowCatalogItem,
                      DocTemplate, DocTemplateElement)
@@ -22,8 +23,29 @@ class BreedAdmin(admin.ModelAdmin):
 admin.site.register(Breed, BreedAdmin)
 
 
+class OwnerAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'phone', 'email', 'work')
+    search_fields = ('name', 'address', 'phone', 'email')
+
+admin.site.register(Owner, OwnerAdmin)
+
+
+class KennelAdmin(admin.ModelAdmin):
+    list_display = ('name', 'address', 'breeder')
+    search_fields = ('name', 'address', 'breeder')
+
+admin.site.register(Kennel, KennelAdmin)
+
+
 class AnimalOwnerInline(admin.TabularInline):
     model = AnimalOwner
+    raw_id_fields = ('owner', )
+    extra = 0
+
+
+class AnimalKennelInline(admin.TabularInline):
+    model = AnimalKennel
+    raw_id_fields = ('kennel', )
     extra = 0
 
 
@@ -42,7 +64,7 @@ class AnimalAdmin(admin.ModelAdmin):
     list_display = ('get_display', 'breed', 'gender', 'get_color', 'birthdate', 'father', 'mother', 'reg_number',
                     'is_our')
     list_filter = ('gender', 'is_our', 'breed')
-    inlines = (AnimalPedigreeNumberInline, AnimalTitleInline, AnimalOwnerInline)
+    inlines = (AnimalPedigreeNumberInline, AnimalTitleInline, AnimalOwnerInline, AnimalKennelInline)
 
 
 admin.site.register(Animal, AnimalAdmin)

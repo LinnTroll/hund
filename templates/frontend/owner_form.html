@@ -1,0 +1,42 @@
+{% extends 'frontend/base.html' %}{% load bootstrap3 %}
+
+{% block content %}
+    <h3></h3>
+
+    <div class="row">
+        <div class="col-sm-8">
+            {% if object %}
+                <h4>Редактирование владельца "{{ object }}"</h4>
+            {% else %}
+                <h4>Создание владельца</h4>
+            {% endif %}
+        </div>
+        <div class="col-sm-4" style="text-align: right;">
+            <a href="{% url 'core_owners_list' %}">Назад</a>
+        </div>
+    </div>
+
+    <form action="#" method="post" class="form">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-sm-5">
+                {% bootstrap_field form.name %}
+                {% bootstrap_field form.address %}
+                {% bootstrap_field form.phone %}
+                {% bootstrap_field form.email %}
+                {% bootstrap_field form.work %}
+
+                {% buttons %}
+                    <button type="submit" class="btn btn-primary">{% if object %}Сохранить{% else %}Создать{% endif %}</button>
+                {% endbuttons %}
+            </div>
+            <div class="col-sm-7"></div>
+        </div>
+    </form>
+
+    <br>
+    <br>
+    <br>
+
+{% endblock %}

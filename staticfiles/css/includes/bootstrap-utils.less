@@ -34,6 +34,11 @@ debug {
     width: 1024px;
     margin: 30px auto;
   }
+  &.ownerpopup {
+    .modal-dialog {
+      width: 600px;
+    }
+  }
 }
 
 .select2_slim {
@@ -51,11 +56,24 @@ debug {
   }
 }
 
+.select2_max_width {
+  .select2 {
+    width: 100% !important;
+  }
+}
+
 .select2_right_btn {
   .select2-container {
     .select2-selection--single {
       border-top-right-radius: 0;
       border-bottom-right-radius: 0;
     }
+  }
+}
+
+
+.peoplestabs {
+  .nav-tabs > li.active > a {
+    font-weight: bold;
   }
 }

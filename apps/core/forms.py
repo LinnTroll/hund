@@ -2,7 +2,7 @@
 from django import forms
 
 from .models import (Animal, AnimalPedigreeNumber, AnimalOwner, AnimalTitle, DocTemplate, Show, ShowMember, ShowGroup,
-                     ShowCatalogItem)
+                     ShowCatalogItem, Owner, Kennel)
 
 
 class AnimalForm(forms.ModelForm):
@@ -46,6 +46,16 @@ class AnimalOwnerForm(forms.ModelForm):
     class Meta:
         model = AnimalOwner
         exclude = ('animal',)
+
+
+class OwnerForm(forms.ModelForm):
+    class Meta:
+        model = Owner
+
+
+class KennelForm(forms.ModelForm):
+    class Meta:
+        model = Kennel
 
 
 class AnimalTitleForm(forms.ModelForm):
