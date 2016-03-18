@@ -20,6 +20,7 @@
             <th>Название</th>
             <th>Заводчик</th>
             <th>Адрес</th>
+            <th>Кол-во собак</th>
         </tr>
         </thead>
         <tbody>
@@ -32,6 +33,7 @@
                     {{ object.breeder }}
                 </td>
                 <td>{{ object.address }}</td>
+                <td>{{ object.animalkennel_set.count }}</td>
             </tr>
         {% endfor %}
         </tbody>

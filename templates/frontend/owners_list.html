@@ -22,6 +22,7 @@
             <th>E-mail</th>
             <th>Адрес</th>
             <th>Место работы</th>
+            <th>Кол-во собак</th>
         </tr>
         </thead>
         <tbody>
@@ -38,6 +39,7 @@
                 </td>
                 <td>{{ object.address }}</td>
                 <td>{{ object.work }}</td>
+                <td>{{ object.animalowner_set.count }}</td>
             </tr>
         {% endfor %}
         </tbody>
