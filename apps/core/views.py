@@ -1510,6 +1510,20 @@ class OwnersFormView(FormView):
         return context_data
 
 
+class OwnersDeleteView(DeleteView):
+    model = Owner
+    template_name = 'frontend/owner_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        return super(OwnersDeleteView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('core_owners_list')
+
+
+
 class KennelsListView(ListView):
     template_name = 'frontend/kennels_list.html'
     model = Kennel
@@ -1550,3 +1564,16 @@ class KennelsFormView(FormView):
         context_data = super(KennelsFormView, self).get_context_data(**kwargs)
         context_data['object'] = self.object
         return context_data
+
+
+class KennelsDeleteView(DeleteView):
+    model = Kennel
+    template_name = 'frontend/kennel_delete.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated():
+            return redirect('core_index')
+        return super(KennelsDeleteView, self).dispatch(request, *args, **kwargs)
+
+    def get_success_url(self):
+        return reverse('core_kennel_list')

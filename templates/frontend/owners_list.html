@@ -23,6 +23,9 @@
             <th>Адрес</th>
             <th>Место работы</th>
             <th>Кол-во собак</th>
+            <th style="width: 14px;">
+                <span class="glyphicon glyphicon-trash"></span>
+            </th>
         </tr>
         </thead>
         <tbody>
@@ -40,6 +43,11 @@
                 <td>{{ object.address }}</td>
                 <td>{{ object.work }}</td>
                 <td>{{ object.animalowner_set.count }}</td>
+                <td>
+                    <a href="{% url 'core_owner_delete' pk=object.pk %}" class="text-danger" title="Удалить">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </a>
+                </td>
             </tr>
         {% endfor %}
         </tbody>
