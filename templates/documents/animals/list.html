@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title></title>
+    <style>
+        html, body {
+            color: #000000;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 0.7em;
+            line-height: 1.2em;
+        }
+
+        h1 {
+            font-size: 20px;
+            text-align: center;
+        }
+
+        h1 span {
+            font-size: 14px;
+            padding-bottom: 0;
+            margin-bottom: 0;
+        }
+
+        .animalstable {
+            width: 100%;
+            border-collapse: collapse;
+            page-break-inside: avoid;
+        }
+
+        .animalstable tr {
+            page-break-inside: avoid;
+        }
+
+        .animalstable tr.animalstable__headrow {
+
+        }
+
+        .animalstable tr td {
+            padding: 5px 4px;
+            vertical-align: top;
+        }
+
+        .animalstable tr.animalstable__headrow td {
+            padding: 30px 4px 10px;
+            font-size: 14px;
+            color: #666666;
+            border-bottom: 2px solid #cccccc;
+        }
+
+        .animalstable tr.animalstable__headrow td strong {
+            color: #333333;
+        }
+
+        .animalstable tr.animalstable__row td {
+            border-bottom: 1px solid #cccccc;
+        }
+
+        .animalstable tr.animalstable__row_first td {
+        }
+
+        .animalstable tr.animalstable__row_last td {
+            border-bottom: none;
+        }
+
+        .animalstable__cell_titles {
+        }
+
+    </style>
+</head>
+<body>
+
+<h1>Участниуи клуба <span>/ {{ today }}</span></h1>
+
+{% if request.GET.view == 'by_owner' %}
+
+    {% for owner_group in owner_groups %}
+        <table class="animalstable">
+            <tbody>
+
+            <tr class="animalstable__headrow">
+                <td colspan="10">
+                    {% with owner_group.owner as owner %}
+                        {% if owner %}
+                            <strong>{{ owner }}</strong>
+                            {% if owner.address %}
+                                <span>{{ owner.address }}</span>
+                            {% endif %}
+                            {% if owner.phone %}
+                                <span>{{ owner.phone }}</span>
+                            {% endif %}
+                            {% if owner.email %}
+                                <span>{{ owner.email }}</span>
+                            {% endif %}
+                            {% if owner.work %}
+                                <span>{{ owner.work }}</span>
+                            {% endif %}
+                        {% else %}
+                            <strong>Владелец не указан</strong>
+                        {% endif %}
+                    {% endwith %}
+                </td>
+            </tr>
+            {% for item in owner_group.items %}
+                <tr class="animalstable__row{% if forloop.first %} animalstable__row_first{% endif %}{% if forloop.last %} animalstable__row_last{% endif %}">
+                    <td style="width: 20%;">{{ item.get_display }}</td>
+                    <td style="width: 17%;">
+                        {% with item.get_color as color %}
+                            {{ item.breed|default:'' }}{% if color %},{% endif %}
+                            {% if color %}{{ color }}{% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="width: 3%;">{{ item.get_gender_display|default:'' }}</td>
+                    <td style="width: 10%;">
+                        {% if item.birthdate %}
+                            {{ item.birthdate|date:'d.m.Y' }}
+                        {% endif %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% if item.chip %}
+                            <div>Чип: {{ item.chip }}</div>
+                        {% endif %}
+                        {% if item.mark %}
+                            <div>Клеймо: {{ item.mark }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="width: 13%;">
+                        {% for pedigree_number in item.animalpedigreenumber_set.all %}
+                            {{ pedigree_number.number }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td style="width: 12%;" class="animalstable__cell_titles">
+                        {% for title in item.get_titles %}
+                            {% if title.info %}{{ title.info }}x{% endif %}{{ title.title }}{% if not forloop.last %},
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% if item.reg_date %}
+                            {{ item.reg_date|date:'d.m.Y' }}
+                        {% endif %}
+                    </td>
+                    <td style="width: 5%;">
+                        {{ item.reg_number|default:'' }}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+        </table>
+    {% endfor %}
+{% else %}
+
+    <table class="animalstable">
+        <tbody>
+        {% for item in animal_list %}
+                <tr class="animalstable__row">
+                    <td style="width: 20%;">{{ item.get_display }}</td>
+                    <td style="width: 17%;">
+                        {% with item.get_color as color %}
+                            {{ item.breed|default:'' }}{% if color %},{% endif %}
+                            {% if color %}{{ color }}{% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="width: 3%;">{{ item.get_gender_display|default:'' }}</td>
+                    <td style="width: 10%;">
+                        {% if item.birthdate %}
+                            {{ item.birthdate|date:'d.m.Y' }}
+                        {% endif %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% if item.chip %}
+                            <div>Чип: {{ item.chip }}</div>
+                        {% endif %}
+                        {% if item.mark %}
+                            <div>Клеймо: {{ item.mark }}</div>
+                        {% endif %}
+                    </td>
+                    <td style="width: 13%;">
+                        {% for pedigree_number in item.animalpedigreenumber_set.all %}
+                            {{ pedigree_number.number }}{% if not forloop.last %},{% endif %}
+                        {% endfor %}
+                    </td>
+                    <td style="width: 12%;" class="animalstable__cell_titles">
+                        {% for title in item.get_titles %}
+                            {% if title.info %}{{ title.info }}x{% endif %}{{ title.title }}{% if not forloop.last %},
+                            {% endif %}
+                        {% endfor %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% if item.reg_date %}
+                            {{ item.reg_date|date:'d.m.Y' }}
+                        {% endif %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% with item.get_last_owner.owner as owner %}
+                            {% if owner %}
+                                {{ owner.name }}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% with item.get_last_owner.owner as owner %}
+                            {% if owner %}
+                                {{ owner.address }}
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="width: 10%;">
+                        {% with item.get_last_owner.owner as owner %}
+                            {% if owner %}
+                                <div>{{ owner.phone }}</div>
+                                <div>{{ owner.email }}</div>
+                                <div>{{ owner.work }}</div>
+                            {% endif %}
+                        {% endwith %}
+                    </td>
+                    <td style="width: 5%;">
+                        {{ item.reg_number|default:'' }}
+                    </td>
+                </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+{% endif %}
+
+</body>
+</html>

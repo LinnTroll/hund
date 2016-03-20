@@ -2,8 +2,10 @@
 import os
 import json
 import xlwt
+import datetime
 from tempfile import mkdtemp
 from subprocess import call
+from itertools import groupby
 
 from django.conf import settings
 from django.db.models import Q, Count, get_model
@@ -98,168 +100,251 @@ class AnimalsListView(ListView):
         return context_data
 
 
-# Export all dogs from catalog to xls table
-class AnimalsListExportXLSView(View):
+# # Export all dogs from catalog to xls table
+# class AnimalsListExportXLSView(View):
+#     def dispatch(self, request, *args, **kwargs):
+#         response = HttpResponse(mimetype="application/ms-excel")
+#         response['Content-Disposition'] = 'attachment; filename=file.xls'
+#
+#         if not request.user.is_authenticated():
+#             return redirect('core_index')
+#
+#         our_animals = Animal.objects.filter(is_our=True)
+#
+#         wb = xlwt.Workbook()
+#         ws = wb.add_sheet(u'Собаки')
+#
+#         rc = 0
+#
+#         h_style = xlwt.XFStyle()
+#         h_pattern = xlwt.Pattern()
+#         h_pattern.pattern = xlwt.Pattern.SOLID_PATTERN
+#         h_pattern.pattern_fore_colour = xlwt.Style.colour_map['lavender']
+#         h_style.pattern = h_pattern
+#
+#         alignment = xlwt.Alignment()
+#         alignment.vert = xlwt.Alignment.VERT_CENTER
+#         h_style.alignment = alignment
+#
+#         ws.write(0, 0, u'№п/п', h_style)
+#         ws.write(0, 1, u'Порода, пол, цвет, дата вступл.', h_style)
+#         ws.write(0, 2, u'Кличка', h_style)
+#         ws.write(0, 3, u'Документы', h_style)
+#         ws.write(0, 4, u'Дата рождения', h_style)
+#         ws.write(0, 5, u'Владелец', h_style)
+#         ws.write(0, 6, u'Телефон, адрес, email, место работы', h_style)
+#         ws.write(0, 7, u'регистр. №', h_style)
+#
+#         ws.row(0).height_mismatch = True
+#         ws.row(0).height = 22 * 20
+#
+#         for r, animal in enumerate(our_animals):
+#             cols = [
+#                 [],
+#                 [],
+#                 [],
+#                 [],
+#                 [],
+#                 [],
+#                 [],
+#                 [],
+#             ]
+#
+#             # 0
+#             cols[0].append(u'%s' % (r + 1))
+#
+#             # 1
+#             if animal.breed:
+#                 cols[1].append(u'%s' % animal.breed)
+#
+#             _color = animal.get_color()
+#             _gender_and_color = u', '.join(filter(bool, [u'%s' % animal.get_gender_label(), _color]))
+#
+#             cols[1].append(_gender_and_color)
+#
+#             _reg_date = animal.get_reg_date_human()
+#             if _reg_date:
+#                 cols[1].append(_reg_date)
+#
+#             if animal.chip:
+#                 cols[1].append(u'Чип: %s' % animal.chip)
+#
+#             if animal.mark:
+#                 cols[1].append(u'Клеймо: %s' % animal.mark)
+#
+#             # 2
+#             cols[2].append(u'%s' % animal.get_display())
+#
+#             if animal.father:
+#                 cols[2].append(u'Отец: %s' % animal.father.get_display())
+#
+#             if animal.mother:
+#                 cols[2].append(u'Мать: %s' % animal.mother.get_display())
+#
+#             # 3
+#             pedigree_numbers = animal.animalpedigreenumber_set.all()
+#             for pedigree_number in pedigree_numbers:
+#                 cols[3].append(u'%s' % pedigree_number.number)
+#
+#             # 4
+#             _birthdate = animal.get_birthdate_human()
+#             if _birthdate:
+#                 cols[4].append(u'%s' % _birthdate)
+#
+#             # 5
+#             _owner = animal.get_last_owner()
+#             if _owner:
+#                 cols[5].append(u'%s' % _owner.name)
+#
+#             # 6
+#             if _owner:
+#                 if _owner.phone:
+#                     cols[6].append(u'%s' % _owner.phone)
+#                 if _owner.address:
+#                     cols[6].append(u'%s' % _owner.address)
+#                 if _owner.email:
+#                     cols[6].append(u'%s' % _owner.email)
+#                 if _owner.work:
+#                     cols[6].append(u'%s' % _owner.work)
+#
+#             # 7
+#             if animal.reg_number:
+#                 cols[7].append(u'%s' % animal.reg_number)
+#
+#             cols_max_rows = max(map(lambda x: len(x), cols))
+#
+#             for n in xrange(cols_max_rows):
+#                 rc += 1
+#
+#                 for cn, col in enumerate(cols):
+#                     style = xlwt.XFStyle()
+#
+#                     font = xlwt.Font()
+#                     font.height = 10 * 20
+#
+#                     borders = xlwt.Borders()
+#
+#                     if n == 0:
+#                         borders.top = xlwt.Borders.MEDIUM
+#
+#                     if r == len(our_animals) - 1:
+#                         if n == cols_max_rows - 1:
+#                             borders.bottom = xlwt.Borders.MEDIUM
+#
+#                     if cn == 1 and n > 0:
+#                         font.height = 9 * 20
+#
+#                     if cn == 2 and n > 0:
+#                         font.height = 9 * 20
+#
+#                     if cn == 4:
+#                         font.height = 9 * 20
+#
+#                     col_val = u''
+#
+#                     if n < len(col):
+#                         col_val = col[n]
+#
+#                     style.borders = borders
+#                     style.font = font
+#
+#                     ws.write(rc, cn, col_val, style)
+#
+#         ws.col(0).width = 80 * 20
+#         ws.col(1).width = 400 * 20
+#         ws.col(2).width = 500 * 20
+#         ws.col(3).width = 260 * 20
+#         ws.col(4).width = 200 * 20
+#         ws.col(5).width = 400 * 20
+#         ws.col(6).width = 500 * 20
+#         ws.col(7).width = 200 * 20
+#
+#         wb.save(response)
+#
+#         return response
+
+
+class AnimalsListExportHTMLView(ListView):
+    template_name = 'documents/animals/list.html'
+    model = Animal
+
+    def get_queryset(self):
+        self.queryset = super(AnimalsListExportHTMLView, self).get_queryset()
+        self.queryset = self.queryset.filter(is_our=True)
+        return self.queryset
+
+    def sort_owner_groupitems(self, items):
+        items = sorted(items, key=lambda x: x.breed.name)
+        return items
+
+    def get_owner_groups(self):
+        all_animals = [(x.get_last_owner(), x) for x in self.queryset]
+
+        owned_animals = filter(lambda x: x[0], all_animals)
+        unowned_animals = filter(lambda x: not x[0], all_animals)
+
+        owned_animals = sorted([(x[0].owner, x[1]) for x in owned_animals], key=lambda x: x[0].id)
+
+        groups = [{
+            'owner': x[0],
+            'items': self.sort_owner_groupitems([i[1] for i in x[1]]),
+        } for x in groupby(owned_animals, key=lambda x: x[0])]
+        groups = sorted(groups, key=lambda x: x['owner'].name)
+
+        groups.append({
+            'owner': None,
+            'items': self.sort_owner_groupitems([x[1] for x in unowned_animals]),
+        })
+
+        return groups
+
+    def get_animal_list(self):
+        return self.queryset.order_by('name_ru')
+
+    def get_context_data(self, **kwargs):
+        context_data = super(AnimalsListExportHTMLView, self).get_context_data(**kwargs)
+        context_data['owner_groups'] = self.get_owner_groups()
+        context_data['animal_list'] = self.get_animal_list()
+        context_data['today'] = datetime.date.today()
+        return context_data
+
+
+class AnimalsListExportPDFView(View):
     def dispatch(self, request, *args, **kwargs):
-        response = HttpResponse(mimetype="application/ms-excel")
-        response['Content-Disposition'] = 'attachment; filename=file.xls'
+        web_page_url = request.build_absolute_uri(reverse('core_animals_export_html'))
 
-        if not request.user.is_authenticated():
-            return redirect('core_index')
+        get_params = dict(request.GET.items())
 
-        our_animals = Animal.objects.filter(is_our=True)
+        if get_params:
+            web_page_url = u'{web_page_url}?{q}'.format(
+                web_page_url=web_page_url,
+                q=u'&'.join([u'='.join((x[0], x[1])) for x in get_params.items()])
+            )
 
-        wb = xlwt.Workbook()
-        ws = wb.add_sheet(u'Собаки')
+        wkhtmltopdf_bin = settings.WKHTMLTOPDF_BIN
+        if not isinstance(wkhtmltopdf_bin, list):
+            wkhtmltopdf_bin = [wkhtmltopdf_bin, ]
 
-        rc = 0
+        tmp_dir = mkdtemp()
+        tmp_pdf_file = os.path.join(tmp_dir, 'club-animals.pdf')
 
-        h_style = xlwt.XFStyle()
-        h_pattern = xlwt.Pattern()
-        h_pattern.pattern = xlwt.Pattern.SOLID_PATTERN
-        h_pattern.pattern_fore_colour = xlwt.Style.colour_map['lavender']
-        h_style.pattern = h_pattern
+        _orientation = request.GET.get('orientation', None) or 'port'
 
-        alignment = xlwt.Alignment()
-        alignment.vert = xlwt.Alignment.VERT_CENTER
-        h_style.alignment = alignment
+        orientation = {'port': 'Portrait', 'album': 'Landscape'}[_orientation]
 
-        ws.write(0, 0, u'№п/п', h_style)
-        ws.write(0, 1, u'Порода, пол, цвет, дата вступл.', h_style)
-        ws.write(0, 2, u'Кличка', h_style)
-        ws.write(0, 3, u'Документы', h_style)
-        ws.write(0, 4, u'Дата рождения', h_style)
-        ws.write(0, 5, u'Владелец', h_style)
-        ws.write(0, 6, u'Телефон, адрес, email, место работы', h_style)
-        ws.write(0, 7, u'регистр. №', h_style)
+        call(wkhtmltopdf_bin + [
+            '--page-size', 'A4',
+            '--orientation', orientation,
+            web_page_url,
+            tmp_pdf_file
+        ])
 
-        ws.row(0).height_mismatch = True
-        ws.row(0).height = 22 * 20
+        fsock = open(tmp_pdf_file, 'r').read()
+        response = HttpResponse(fsock, content_type='application/pdf')
 
-        for r, animal in enumerate(our_animals):
-            cols = [
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-                [],
-            ]
-
-            # 0
-            cols[0].append(u'%s' % (r + 1))
-
-            # 1
-            if animal.breed:
-                cols[1].append(u'%s' % animal.breed)
-
-            _color = animal.get_color()
-            _gender_and_color = u', '.join(filter(bool, [u'%s' % animal.get_gender_label(), _color]))
-
-            cols[1].append(_gender_and_color)
-
-            _reg_date = animal.get_reg_date_human()
-            if _reg_date:
-                cols[1].append(_reg_date)
-
-            if animal.chip:
-                cols[1].append(u'Чип: %s' % animal.chip)
-
-            if animal.mark:
-                cols[1].append(u'Клеймо: %s' % animal.mark)
-
-            # 2
-            cols[2].append(u'%s' % animal.get_display())
-
-            if animal.father:
-                cols[2].append(u'Отец: %s' % animal.father.get_display())
-
-            if animal.mother:
-                cols[2].append(u'Мать: %s' % animal.mother.get_display())
-
-            # 3
-            pedigree_numbers = animal.animalpedigreenumber_set.all()
-            for pedigree_number in pedigree_numbers:
-                cols[3].append(u'%s' % pedigree_number.number)
-
-            # 4
-            _birthdate = animal.get_birthdate_human()
-            if _birthdate:
-                cols[4].append(u'%s' % _birthdate)
-
-            # 5
-            _owner = animal.get_last_owner()
-            if _owner:
-                cols[5].append(u'%s' % _owner.name)
-
-            # 6
-            if _owner:
-                if _owner.phone:
-                    cols[6].append(u'%s' % _owner.phone)
-                if _owner.address:
-                    cols[6].append(u'%s' % _owner.address)
-                if _owner.email:
-                    cols[6].append(u'%s' % _owner.email)
-                if _owner.work:
-                    cols[6].append(u'%s' % _owner.work)
-
-            # 7
-            if animal.reg_number:
-                cols[7].append(u'%s' % animal.reg_number)
-
-            cols_max_rows = max(map(lambda x: len(x), cols))
-
-            for n in xrange(cols_max_rows):
-                rc += 1
-
-                for cn, col in enumerate(cols):
-                    style = xlwt.XFStyle()
-
-                    font = xlwt.Font()
-                    font.height = 10 * 20
-
-                    borders = xlwt.Borders()
-
-                    if n == 0:
-                        borders.top = xlwt.Borders.MEDIUM
-
-                    if r == len(our_animals) - 1:
-                        if n == cols_max_rows - 1:
-                            borders.bottom = xlwt.Borders.MEDIUM
-
-                    if cn == 1 and n > 0:
-                        font.height = 9 * 20
-
-                    if cn == 2 and n > 0:
-                        font.height = 9 * 20
-
-                    if cn == 4:
-                        font.height = 9 * 20
-
-                    col_val = u''
-
-                    if n < len(col):
-                        col_val = col[n]
-
-                    style.borders = borders
-                    style.font = font
-
-                    ws.write(rc, cn, col_val, style)
-
-        ws.col(0).width = 80 * 20
-        ws.col(1).width = 400 * 20
-        ws.col(2).width = 500 * 20
-        ws.col(3).width = 260 * 20
-        ws.col(4).width = 200 * 20
-        ws.col(5).width = 400 * 20
-        ws.col(6).width = 500 * 20
-        ws.col(7).width = 200 * 20
-
-        wb.save(response)
-
+        response['Content-Disposition'] = 'attachment; filename="club-animals-%s.pdf"' % datetime.date.today()
         return response
+
 
 
 class AnimalEditView(DetailView):
