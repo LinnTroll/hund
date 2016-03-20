@@ -159,6 +159,10 @@ debug {
 .animal-list-showclass {
   font-size: 12px;
 }
+.animalpopup .modal-body {
+  max-height: 600px;
+  overflow-y: auto;
+}
 .shortanimal__autocompliterow__name {
   font-size: 13px;
 }
@@ -228,6 +232,9 @@ debug {
 .ownerdie__row.ownerdie__row_phone {
   font-size: 12px;
   opacity: .8;
+}
+.ownerpopup {
+  z-index: 2000;
 }
 .docpreview {
   padding: 20px 0 100px 0;

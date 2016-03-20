@@ -33,6 +33,40 @@
         </div>
     </form>
 
+    {% if object %}
+        {% with object.animalkennel_set.all as animalkennels %}
+            {% if animalkennels %}
+            <hr>
+            <table class="table table-condensed">
+                <thead>
+                    <tr>
+                        <th>Имя</th>
+                        <th>Порода</th>
+                        <th style="width: 50px;">Пол</th>
+                        <th>Номер родословной</th>
+                    </tr>
+                </thead>
+                <tbody>
+                {% for animalkennel in animalkennels %}
+                    <tr>
+                        <td class="animal-list-name"><a href="{% url 'core_animals_edit' pk=animalkennel.animal.pk %}">{{ animalkennel.animal.get_display }}</a></td>
+                        <td class="animal-list-breed">{{ animalkennel.animal.breed }}</td>
+                        <td class="animal-list-gender">{{ animalkennel.animal.get_gender_display }}</td>
+                        <td class="animal-list-pedigree">
+                            {% if animalkennel.animal.get_pedigree_numbers %}
+                                {% for pedigree_number in animalkennel.animal.get_pedigree_numbers %}
+                                    <div>{{ pedigree_number.number }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        </td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+            </table>
+            {% endif %}
+        {% endwith %}
+    {% endif %}
+
     <br>
     <br>
     <br>

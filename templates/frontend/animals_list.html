@@ -1,4 +1,4 @@
-{% extends 'frontend/base.html' %}{% load pagination_tags %}
+{% extends 'frontend/base.html' %}{% load pytils_numeral pagination_tags %}
 
 {% block container %}
     {% if not extended %}
@@ -134,11 +134,25 @@
                     {% if object.father %}
                         <div>
                             <span class="animal-list-gender-symbol">♂</span> <a href="{% url 'core_animals_edit' pk=object.father.pk %}">{{ object.father }}</a>
+                            {% if extended %}
+                                {% with object.father.get_ancestors_count as ancestors_count %}
+                                    {% if ancestors_count %}
+                                        <div>+ {{ ancestors_count }} пред{{ ancestors_count|choose_plural:'ок,ка,ков' }}</div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </div>
                     {% endif %}
                     {% if object.mother %}
                         <div>
                             <span class="animal-list-gender-symbol">♀</span> <a href="{% url 'core_animals_edit' pk=object.mother.pk %}">{{ object.mother }}</a>
+                            {% if extended %}
+                                {% with object.mother.get_ancestors_count as ancestors_count %}
+                                    {% if ancestors_count %}
+                                        <div>+ {{ ancestors_count }} пред{{ ancestors_count|choose_plural:'ок,ка,ков' }}</div>
+                                    {% endif %}
+                                {% endwith %}
+                            {% endif %}
                         </div>
                     {% endif %}
                 </td>

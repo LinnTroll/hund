@@ -88,6 +88,14 @@ class Animal(models.Model):
             self.reg_number = None
         super(Animal, self).save(*args, **kwargs)
 
+    def get_ancestors_count(self):
+        tc = 0
+        if self.father:
+            tc += self.father.get_ancestors_count() + 1
+        if self.mother:
+            tc += self.mother.get_ancestors_count() + 1
+        return tc
+
     def get_display(self):
         return u'%s' % (self.name_ru or self.name_en, )
 

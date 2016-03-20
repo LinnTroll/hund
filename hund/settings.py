@@ -42,6 +42,7 @@ INSTALLED_APPS = (
     'widget_tweaks',
     'pagination',
     'bootstrap3',
+    'pytils',
     #
     'apps.core',
 )

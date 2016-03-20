@@ -6,3 +6,4 @@ __pycache__/
 media/
 */settings_local.py
 db.sqlite3
+.docker

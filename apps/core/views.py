@@ -790,46 +790,52 @@ class AjaxAnimalCreateView(View):
 
             ancestors = data.get('ancestors', None)
 
-            ancestors[''] = {'pk': animal.pk}
+            print "******", ancestors
 
-            real_pairs = []
+            if ancestors:
+                print "****** *", ancestors
 
-            for key, ancestor in ancestors.items():
-                if key:
-                    child_key = key[:len(key) - 1]
-                    _child = ancestors.get(child_key, None)
-                    _gender = key[len(key) - 1]
-                    _parent_field = {'m': 'father', 'f': 'mother'}[_gender]
+                ancestors[''] = {'pk': animal.pk}
+                real_pairs = []
 
-                    if _child and ancestor:
-                        real_pairs.append([child_key, key])
-                        _child_pk = _child.get('pk', None)
-                        _parent_pk = ancestor.get('pk', None)
-                        if _child_pk and _parent_pk:
-                            _child_obj = Animal.objects.get(pk=_child_pk)
-                            _parent_obj = Animal.objects.get(pk=_parent_pk)
-                            setattr(_child_obj, _parent_field, _parent_obj)
-                            _child_obj.save()
+                # Set parents relations
+                for key, ancestor in ancestors.items():
+                    if key:
+                        child_key = key[:len(key) - 1]
+                        _child = ancestors.get(child_key, None)
+                        _gender = key[len(key) - 1]
+                        _parent_field = {'m': 'father', 'f': 'mother'}[_gender]
 
-            animal = Animal.objects.get(pk=animal.pk)
-
-            ancestors = animal.get_ancestors()
-            ancestors[''] = {'pk': animal.pk}
-
-            for key, ancestor in ancestors.items():
-                if key:
-                    child_key = key[:len(key) - 1]
-                    _child = ancestors.get(child_key, None)
-                    _gender = key[len(key) - 1]
-                    _parent_field = {'m': 'father', 'f': 'mother'}[_gender]
-
-                    if _child and ancestor:
-                        if not [child_key, key] in real_pairs:
+                        if _child and ancestor:
+                            real_pairs.append([child_key, key])
                             _child_pk = _child.get('pk', None)
-                            if _child_pk:
+                            _parent_pk = ancestor.get('pk', None)
+                            if _child_pk and _parent_pk:
                                 _child_obj = Animal.objects.get(pk=_child_pk)
-                                setattr(_child_obj, _parent_field, None)
+                                _parent_obj = Animal.objects.get(pk=_parent_pk)
+                                setattr(_child_obj, _parent_field, _parent_obj)
                                 _child_obj.save()
+
+                animal = Animal.objects.get(pk=animal.pk)
+
+                ancestors = animal.get_ancestors()
+                ancestors[''] = {'pk': animal.pk}
+
+                # Remove parents relations
+                for key, ancestor in ancestors.items():
+                    if key:
+                        child_key = key[:len(key) - 1]
+                        _child = ancestors.get(child_key, None)
+                        _gender = key[len(key) - 1]
+                        _parent_field = {'m': 'father', 'f': 'mother'}[_gender]
+
+                        if _child and ancestor:
+                            if not [child_key, key] in real_pairs:
+                                _child_pk = _child.get('pk', None)
+                                if _child_pk:
+                                    _child_obj = Animal.objects.get(pk=_child_pk)
+                                    setattr(_child_obj, _parent_field, None)
+                                    _child_obj.save()
 
             return HttpResponse(json.dumps({
                 'status': 'success',

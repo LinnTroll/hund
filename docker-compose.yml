@@ -1,7 +1,18 @@
 version: '2'
 services:
   db:
-    image: postgres
+    image: mysql
+    ports:
+        - "3306:3306"
+    volumes:
+        - $PWD/.docker/db/data/$USER:/var/lib/mysql
+        - $PWD/.docker/db/entrypoint.sh:/entrypoint.sh
+    environment:
+        MYSQL_ROOT_PASSWORD: ApulRegcinwewroaphmoasEnVecIdMic
+        MYSQL_DATABASE: hund
+        MYSQL_USER: hund
+        MYSQL_PASSWORD: KeyRidCidyiewJequicoubOnyeOncib7
+
   web:
     build: .
     volumes:

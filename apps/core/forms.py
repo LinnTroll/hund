@@ -8,6 +8,7 @@ from .models import (Animal, AnimalPedigreeNumber, AnimalOwner, AnimalTitle, Doc
 class AnimalForm(forms.ModelForm):
     class Meta:
         model = Animal
+        exclude = ('father', 'mother')
 
     def clean(self):
         cleaned_data = super(AnimalForm, self).clean()
