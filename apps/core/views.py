@@ -1564,6 +1564,22 @@ class OwnersListView(ListView):
     model = Owner
     view = 'owners'
 
+    def get_queryset(self):
+        queryset = super(OwnersListView, self).get_queryset()
+        search = self.request.GET.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(phone__icontains=search) |
+                Q(email__icontains=search) |
+                Q(animalowner__animal__name_ru__icontains=search) |
+                Q(animalowner__animal__name_en__icontains=search) |
+                Q(animalowner__animal__mark__icontains=search) |
+                Q(animalowner__animal__chip__icontains=search) |
+                Q(animalowner__animal__animalpedigreenumber__number__icontains=search)
+            )
+        return queryset
+
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated():
             return redirect('core_index')
@@ -1619,6 +1635,21 @@ class KennelsListView(ListView):
     template_name = 'frontend/kennels_list.html'
     model = Kennel
     view = 'kennels'
+
+    def get_queryset(self):
+        queryset = super(KennelsListView, self).get_queryset()
+        search = self.request.GET.get('search', None)
+        if search:
+            queryset = queryset.filter(
+                Q(name__icontains=search) |
+                Q(breeder__icontains=search) |
+                Q(animalkennel__animal__name_ru__icontains=search) |
+                Q(animalkennel__animal__name_en__icontains=search) |
+                Q(animalkennel__animal__mark__icontains=search) |
+                Q(animalkennel__animal__chip__icontains=search) |
+                Q(animalkennel__animal__animalpedigreenumber__number__icontains=search)
+            )
+        return queryset
 
     def dispatch(self, request, *args, **kwargs):
         if not request.user.is_authenticated():

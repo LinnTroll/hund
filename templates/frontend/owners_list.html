@@ -6,10 +6,22 @@
     {% include 'frontend/includes/peoples_tabs.html' %}
 
     <br>
-        <a href="{% url 'core_owner_create' %}" class="btn btn-sm btn-success">
-            <span class="glyphicon glyphicon glyphicon-plus"></span>
-            Добавить владельца
-        </a>
+        <div class="row">
+            <div class="col-md-9">
+                <a href="{% url 'core_owner_create' %}" class="btn btn-sm btn-success">
+                    <span class="glyphicon glyphicon glyphicon-plus"></span>
+                    Добавить владельца
+                </a>
+            </div>
+            <div class="col-md-3">
+                <form class="input-group input-group-sm ng-pristine ng-valid" method="GET" action="#">
+                    <input type="text" name="search" class="form-control" placeholder="Поиск"{% if request.GET.search %} value="{{ request.GET.search }}"{% endif %}>
+                    <span class="input-group-btn">
+                        <button class="btn btn-primary" type="submit"><span class="glyphicon glyphicon-search"></span></button>
+                    </span>
+                </form>
+            </div>
+        </div>
     <br>
 
     {% autopaginate object_list 50 %}
