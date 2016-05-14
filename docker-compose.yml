@@ -3,10 +3,10 @@ services:
   db:
     image: mysql
     ports:
-        - "3306:3306"
+        - "3307:3306"
     volumes:
         - $PWD/.docker/db/data/$USER:/var/lib/mysql
-        - $PWD/.docker/db/entrypoint.sh:/entrypoint.sh
+#        - $PWD/.docker/db/entrypoint.sh:/entrypoint.sh
     environment:
         MYSQL_ROOT_PASSWORD: ApulRegcinwewroaphmoasEnVecIdMic
         MYSQL_DATABASE: hund
