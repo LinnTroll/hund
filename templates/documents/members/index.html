@@ -135,10 +135,10 @@
                     <td class="cell-owner">
                         <div class="cell-in">
                             {% if member.animal.get_last_owner %}
-                                <div>{{ member.animal.get_last_owner.name }}</div>
-                                {% if member.animal.get_last_owner.address %}<div class="cell-in-address">{{ member.animal.get_last_owner.address }}</div>{% endif %}
-                                {% if member.animal.get_last_owner.phone %}<div class="cell-in-phone">{{ member.animal.get_last_owner.phone }}</div>{% endif %}
-                                {% if member.animal.get_last_owner.email %}<div class="cell-in-email">{{ member.animal.get_last_owner.email }}</div>{% endif %}
+                                <div>{{ member.animal.get_last_owner.owner.name }}</div>
+                                {% if member.animal.get_last_owner.owner.address %}<div class="cell-in-address">{{ member.animal.get_last_owner.owner.address }}</div>{% endif %}
+                                {% if member.animal.get_last_owner.owner.phone %}<div class="cell-in-phone">{{ member.animal.get_last_owner.owner.phone }}</div>{% endif %}
+                                {% if member.animal.get_last_owner.owner.email %}<div class="cell-in-email">{{ member.animal.get_last_owner.owner.email }}</div>{% endif %}
                             {% endif %}
                         </div>
                     </td>
