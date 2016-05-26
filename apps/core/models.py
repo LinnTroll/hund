@@ -467,6 +467,7 @@ class Show(models.Model):
     title = models.CharField(u'Название выставки', max_length=250)
     date = models.DateField(u'Дата проведения', )
     judge = models.CharField(u'Судья', max_length=250, blank=True, default='')
+    assistant = models.CharField(u'Секретарь', max_length=250, blank=True, default='')
     # check_in = models.BooleanField(u'Регистрация закрыта', default=False)
     created_at = models.DateTimeField(u'Создан', auto_now_add=True)
 
@@ -569,6 +570,7 @@ class ShowMember(models.Model):
             ('show__title', u'Название выставки'),
             ('show__get_date_human', u'Дата выставки'),
             ('show__judge', u'Судья'),
+            ('show__assistant', u'Секретарь'),
             ('get_res_rate_display', u'Оценка'),
             ('get_res_title_display', u'Титул'),
             ('cert_number', u'Номер сертификата'),
