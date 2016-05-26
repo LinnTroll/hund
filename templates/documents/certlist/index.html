@@ -156,7 +156,7 @@
                     <td class="cell-owner">
                         <div class="cell-in">
                             {% if member.animal.get_last_owner %}
-                                <div>{{ member.animal.get_last_owner.name }}</div>
+                                <div>{{ member.animal.get_last_owner.owner.name }}</div>
                             {% endif %}
                         </div>
                     </td>
